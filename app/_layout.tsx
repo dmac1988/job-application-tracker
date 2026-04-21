@@ -61,9 +61,7 @@ export default function RootLayout() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        console.log('Starting seed...');
         await seedIfEmpty();
-        console.log('Seed complete, loading data...');
         const cats = await db.select().from(categoriesTable);
         const apps = await db.select().from(applicationsTable);
         const logs = await db.select().from(statusLogsTable);
@@ -72,7 +70,7 @@ export default function RootLayout() {
         setApplications(apps);
         setStatusLogs(logs);
         setTargets(tgts);
-        console.log('Data loaded successfully');
+        console.log('Data loaded:', cats.length, 'categories,', apps.length, 'applications');
       } catch (error) {
         console.error('Error loading data:', error);
       }
