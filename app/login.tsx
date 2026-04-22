@@ -31,12 +31,12 @@ export default function LoginScreen() {
       .where(eq(usersTable.username, username.trim()));
 
     if (results.length === 0) {
-      setError('User not found. Register first.');
+      setError('No account with that username. Try registering instead.');
       return;
     }
 
     if (results[0].password !== password) {
-      setError('Incorrect password.');
+      setError('Incorrect password. Please try again.');
       return;
     }
 
@@ -56,7 +56,7 @@ export default function LoginScreen() {
       .where(eq(usersTable.username, username.trim()));
 
     if (existing.length > 0) {
-      setError('Username already taken.');
+      setError('That username is taken. Pick another one.');
       return;
     }
 
@@ -77,9 +77,13 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.title}>Job Tracker</Text>
-        <Text style={styles.subtitle}>
-          {isRegistering ? 'Create your account' : 'Sign in to continue'}
+        <View style={styles.brandBlock}>
+          <Text style={styles.brandName}>JobTrack</Text>
+          <Text style={styles.brandTagline}>Stay on top of every application</Text>
+        </View>
+
+        <Text style={styles.formTitle}>
+          {isRegistering ? 'Create your account' : 'Welcome back'}
         </Text>
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -115,7 +119,7 @@ export default function LoginScreen() {
           style={styles.primaryButton}
         >
           <Text style={styles.primaryButtonText}>
-            {isRegistering ? 'Register' : 'Login'}
+            {isRegistering ? 'Create Account' : 'Sign In'}
           </Text>
         </Pressable>
 
@@ -127,8 +131,8 @@ export default function LoginScreen() {
         >
           <Text style={styles.switchButtonText}>
             {isRegistering
-              ? 'Already have an account? Login'
-              : "Don't have an account? Register"}
+              ? 'Already have an account? Sign in'
+              : "New here? Create an account"}
           </Text>
         </Pressable>
       </View>
@@ -138,7 +142,7 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F9FAFB',
     flex: 1,
   },
   container: {
@@ -146,43 +150,52 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 24,
   },
-  title: {
-    color: '#0F766E',
-    fontSize: 32,
-    fontWeight: '700',
-    textAlign: 'center',
+  brandBlock: {
+    backgroundColor: '#1E3A5F',
+    borderRadius: 12,
+    marginBottom: 28,
+    padding: 24,
   },
-  subtitle: {
-    color: '#6B7280',
-    fontSize: 16,
-    marginTop: 8,
-    marginBottom: 30,
-    textAlign: 'center',
+  brandName: {
+    color: '#FFFFFF',
+    fontSize: 30,
+    fontWeight: '800',
+    letterSpacing: 1,
+  },
+  brandTagline: {
+    color: '#94B8DB',
+    fontSize: 14,
+    marginTop: 6,
+  },
+  formTitle: {
+    color: '#1A1A2E',
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 18,
   },
   error: {
     backgroundColor: '#FEF2F2',
     borderColor: '#FCA5A5',
-    borderRadius: 10,
+    borderRadius: 8,
     borderWidth: 1,
-    color: '#7F1D1D',
+    color: '#991B1B',
     fontSize: 14,
     marginBottom: 16,
     padding: 10,
-    textAlign: 'center',
   },
   field: {
     marginBottom: 16,
   },
   label: {
-    color: '#334155',
+    color: '#374151',
     fontSize: 13,
     fontWeight: '600',
     marginBottom: 6,
   },
   input: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#CBD5E1',
-    borderRadius: 10,
+    borderColor: '#D1D5DB',
+    borderRadius: 8,
     borderWidth: 1,
     fontSize: 15,
     paddingHorizontal: 12,
@@ -190,8 +203,8 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     alignItems: 'center',
-    backgroundColor: '#0F766E',
-    borderRadius: 10,
+    backgroundColor: '#1E3A5F',
+    borderRadius: 8,
     marginTop: 8,
     paddingVertical: 14,
   },
@@ -206,7 +219,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   switchButtonText: {
-    color: '#0F766E',
+    color: '#1E3A5F',
     fontSize: 14,
     fontWeight: '500',
   },

@@ -4,12 +4,12 @@ import { eq } from 'drizzle-orm';
 import { useRouter } from 'expo-router';
 import { useContext, useState } from 'react';
 import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppContext } from './_layout';
@@ -30,6 +30,9 @@ export default function SettingsScreen() {
   const context = useContext(AppContext);
   const [name, setName] = useState('');
   const [selectedColour, setSelectedColour] = useState(COLOUR_OPTIONS[0]);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editColour, setEditColour] = useState('');
 
   if (!context) return null;
 
@@ -47,6 +50,33 @@ export default function SettingsScreen() {
     setCategories(cats);
     setName('');
     setSelectedColour(COLOUR_OPTIONS[0]);
+  };
+
+  const startEdit = (id: number, currentName: string, currentColour: string) => {
+    setEditingId(id);
+    setEditName(currentName);
+    setEditColour(currentColour);
+  };
+
+  const saveEdit = async () => {
+    if (!editingId || !editName.trim()) return;
+
+    await db
+      .update(categoriesTable)
+      .set({ name: editName.trim(), colour: editColour })
+      .where(eq(categoriesTable.id, editingId));
+
+    const cats = await db.select().from(categoriesTable);
+    setCategories(cats);
+    setEditingId(null);
+    setEditName('');
+    setEditColour('');
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditName('');
+    setEditColour('');
   };
 
   const deleteCategory = async (id: number) => {
@@ -140,18 +170,74 @@ export default function SettingsScreen() {
 
           {categories.map((cat) => (
             <View key={cat.id} style={styles.card}>
-              <View style={styles.cardLeft}>
-                <View style={[styles.colourIndicator, { backgroundColor: cat.colour }]} />
-                <Text style={styles.cardName}>{cat.name}</Text>
-              </View>
-              <Pressable
-                accessibilityLabel={`Delete ${cat.name}`}
-                accessibilityRole="button"
-                onPress={() => deleteCategory(cat.id)}
-                style={styles.deleteSmall}
-              >
-                <Text style={styles.deleteSmallText}>Delete</Text>
-              </Pressable>
+              {editingId === cat.id ? (
+                <View style={styles.editForm}>
+                  <TextInput
+                    accessibilityLabel="Edit category name"
+                    value={editName}
+                    onChangeText={setEditName}
+                    style={styles.editInput}
+                  />
+                  <View style={styles.colourRow}>
+                    {COLOUR_OPTIONS.map((colour) => (
+                      <Pressable
+                        key={colour}
+                        accessibilityLabel={`Change colour to ${colour}`}
+                        accessibilityRole="button"
+                        onPress={() => setEditColour(colour)}
+                        style={[
+                          styles.colourDotSmall,
+                          { backgroundColor: colour },
+                          editColour === colour && styles.colourDotSelected,
+                        ]}
+                      />
+                    ))}
+                  </View>
+                  <View style={styles.editActions}>
+                    <Pressable
+                      accessibilityLabel="Save edit"
+                      accessibilityRole="button"
+                      onPress={saveEdit}
+                      style={styles.saveButton}
+                    >
+                      <Text style={styles.saveButtonText}>Save</Text>
+                    </Pressable>
+                    <Pressable
+                      accessibilityLabel="Cancel edit"
+                      accessibilityRole="button"
+                      onPress={cancelEdit}
+                      style={styles.cancelButton}
+                    >
+                      <Text style={styles.cancelButtonText}>Cancel</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              ) : (
+                <>
+                  <View style={styles.cardLeft}>
+                    <View style={[styles.colourIndicator, { backgroundColor: cat.colour }]} />
+                    <Text style={styles.cardName}>{cat.name}</Text>
+                  </View>
+                  <View style={styles.cardActions}>
+                    <Pressable
+                      accessibilityLabel={`Edit ${cat.name}`}
+                      accessibilityRole="button"
+                      onPress={() => startEdit(cat.id, cat.name, cat.colour)}
+                      style={styles.editButton}
+                    >
+                      <Text style={styles.editButtonText}>Edit</Text>
+                    </Pressable>
+                    <Pressable
+                      accessibilityLabel={`Delete ${cat.name}`}
+                      accessibilityRole="button"
+                      onPress={() => deleteCategory(cat.id)}
+                      style={styles.deleteSmall}
+                    >
+                      <Text style={styles.deleteSmallText}>Delete</Text>
+                    </Pressable>
+                  </View>
+                </>
+              )}
             </View>
           ))}
         </View>
@@ -241,6 +327,11 @@ const styles = StyleSheet.create({
     height: 32,
     width: 32,
   },
+  colourDotSmall: {
+    borderRadius: 999,
+    height: 24,
+    width: 24,
+  },
   colourDotSelected: {
     borderColor: '#0F172A',
     borderWidth: 3,
@@ -258,13 +349,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   card: {
-    alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderColor: '#E5E7EB',
     borderRadius: 14,
     borderWidth: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     marginBottom: 10,
     padding: 14,
   },
@@ -283,6 +371,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  cardActions: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 10,
+  },
+  editButton: {
+    backgroundColor: '#EFF6FF',
+    borderColor: '#93C5FD',
+    borderRadius: 8,
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  editButtonText: {
+    color: '#1D4ED8',
+    fontSize: 13,
+    fontWeight: '600',
+  },
   deleteSmall: {
     backgroundColor: '#FEF2F2',
     borderColor: '#FCA5A5',
@@ -293,6 +399,46 @@ const styles = StyleSheet.create({
   },
   deleteSmallText: {
     color: '#7F1D1D',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  editForm: {
+    gap: 10,
+  },
+  editInput: {
+    backgroundColor: '#F8FAFC',
+    borderColor: '#CBD5E1',
+    borderRadius: 10,
+    borderWidth: 1,
+    fontSize: 15,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  editActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  saveButton: {
+    backgroundColor: '#0F766E',
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  saveButtonText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  cancelButton: {
+    backgroundColor: '#F8FAFC',
+    borderColor: '#94A3B8',
+    borderRadius: 8,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  cancelButtonText: {
+    color: '#0F172A',
     fontSize: 13,
     fontWeight: '600',
   },

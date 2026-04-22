@@ -13,12 +13,25 @@ export default function ApplicationCard({ application }: Props) {
 
   if (!context) return null;
 
-  const { categories } = context;
+  const { categories, statusLogs } = context;
   const category = categories.find((c) => c.id === application.categoryId);
+
+  const appLogs = statusLogs
+    .filter((l) => l.applicationId === application.id)
+    .sort((a, b) => b.date.localeCompare(a.date));
+  const latestStatus = appLogs.length > 0 ? appLogs[0].status : 'No status';
+
+  const statusColour: Record<string, string> = {
+    Applied: '#2563EB',
+    Interviewing: '#D97706',
+    Offered: '#059669',
+    Rejected: '#DC2626',
+    Withdrawn: '#7C3AED',
+  };
 
   return (
     <Pressable
-      accessibilityLabel={`${application.company}, ${application.role}, view details`}
+      accessibilityLabel={`${application.company}, ${application.role}, status ${latestStatus}, view details`}
       accessibilityRole="button"
       onPress={() =>
         router.push({ pathname: '/application/[id]', params: { id: application.id.toString() } })
@@ -28,20 +41,30 @@ export default function ApplicationCard({ application }: Props) {
         pressed ? styles.cardPressed : null,
       ]}
     >
-      <Text style={styles.company}>{application.company}</Text>
+      <View style={styles.topRow}>
+        <Text style={styles.company}>{application.company}</Text>
+        <Text
+          style={[
+            styles.status,
+            { color: statusColour[latestStatus] || '#64748B' },
+          ]}
+        >
+          {latestStatus}
+        </Text>
+      </View>
+
       <Text style={styles.role}>{application.role}</Text>
 
-      <View style={styles.tags}>
+      <View style={styles.bottomRow}>
         {category ? (
-          <View style={[styles.tag, { backgroundColor: category.colour + '20' }]}>
+          <View style={[styles.tag, { backgroundColor: category.colour + '18' }]}>
+            <View style={[styles.tagDot, { backgroundColor: category.colour }]} />
             <Text style={[styles.tagText, { color: category.colour }]}>
               {category.name}
             </Text>
           </View>
         ) : null}
-        <View style={styles.tag}>
-          <Text style={styles.tagText}>{application.date}</Text>
-        </View>
+        <Text style={styles.date}>{application.date}</Text>
       </View>
     </Pressable>
   );
@@ -50,39 +73,62 @@ export default function ApplicationCard({ application }: Props) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#E5E7EB',
-    borderRadius: 14,
+    borderColor: '#E2E8F0',
+    borderLeftColor: '#1E3A5F',
+    borderLeftWidth: 3,
+    borderRadius: 8,
     borderWidth: 1,
-    marginBottom: 12,
+    marginBottom: 10,
     padding: 14,
   },
   cardPressed: {
-    opacity: 0.88,
+    opacity: 0.85,
+  },
+  topRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   company: {
-    color: '#111827',
-    fontSize: 18,
+    color: '#1A1A2E',
+    fontSize: 17,
     fontWeight: '700',
   },
-  role: {
-    color: '#6B7280',
-    fontSize: 14,
-    marginTop: 2,
+  status: {
+    fontSize: 12,
+    fontWeight: '700',
+    textTransform: 'uppercase',
   },
-  tags: {
+  role: {
+    color: '#64748B',
+    fontSize: 14,
+    marginTop: 3,
+  },
+  bottomRow: {
+    alignItems: 'center',
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
+    justifyContent: 'space-between',
     marginTop: 10,
   },
   tag: {
-    backgroundColor: '#EFF6FF',
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    alignItems: 'center',
+    borderRadius: 6,
+    flexDirection: 'row',
+    gap: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  tagDot: {
+    borderRadius: 4,
+    height: 8,
+    width: 8,
   },
   tagText: {
     fontSize: 12,
     fontWeight: '600',
+  },
+  date: {
+    color: '#94A3B8',
+    fontSize: 12,
   },
 });
