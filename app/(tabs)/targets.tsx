@@ -66,6 +66,54 @@ export default function TargetsScreen() {
     return filtered.length;
   };
 
+  const getStreak = (target: { period: string; goal: number; categoryId: number | null }) => {
+    const now = new Date();
+    let streak = 0;
+
+    if (target.period === 'weekly') {
+      for (let i = 0; i < 52; i++) {
+        const weekEnd = new Date(now);
+        weekEnd.setDate(weekEnd.getDate() - (i * 7));
+        const weekStart = new Date(weekEnd);
+        weekStart.setDate(weekStart.getDate() - 7);
+
+        const count = applications.filter((app) => {
+          const appDate = new Date(app.date);
+          const matchesCategory = target.categoryId === null || app.categoryId === target.categoryId;
+          return matchesCategory && appDate >= weekStart && appDate <= weekEnd;
+        }).length;
+
+        if (count >= target.goal) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+    } else {
+      for (let i = 0; i < 12; i++) {
+        const checkMonth = new Date(now.getFullYear(), now.getMonth() - i, 1);
+
+        const count = applications.filter((app) => {
+          const appDate = new Date(app.date);
+          const matchesCategory = target.categoryId === null || app.categoryId === target.categoryId;
+          return (
+            matchesCategory &&
+            appDate.getMonth() === checkMonth.getMonth() &&
+            appDate.getFullYear() === checkMonth.getFullYear()
+          );
+        }).length;
+
+        if (count >= target.goal) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+    }
+
+    return streak;
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <Text style={styles.title}>Targets</Text>
@@ -180,6 +228,7 @@ export default function TargetsScreen() {
               ? categories.find((c) => c.id === target.categoryId)
               : null;
             const met = progress >= target.goal;
+            const streak = getStreak(target);
 
             return (
               <View key={target.id} style={styles.card}>
@@ -221,6 +270,20 @@ export default function TargetsScreen() {
                 <Text style={[styles.statusText, { color: met ? '#059669' : '#DC2626' }]}>
                   {met ? 'Target met!' : `${target.goal - progress} more to go`}
                 </Text>
+
+                {streak > 0 ? (
+                  <View style={styles.streakBadge}>
+                    <Text style={styles.streakText}>
+                      🔥 {streak} {target.period === 'weekly' ? 'week' : 'month'}{streak > 1 ? 's' : ''} streak
+                    </Text>
+                  </View>
+                ) : (
+                  <View style={styles.noStreakBadge}>
+                    <Text style={styles.noStreakText}>
+                      No streak yet — meet this {target.period === 'weekly' ? 'week\'s' : 'month\'s'} goal to start one
+                    </Text>
+                  </View>
+                )}
               </View>
             );
           })
@@ -250,7 +313,7 @@ const styles = StyleSheet.create({
   form: {
     backgroundColor: '#FFFFFF',
     borderColor: '#E2E8F0',
-    borderRadius: 10,
+    borderRadius: 4,
     borderWidth: 1,
     marginTop: 16,
     padding: 16,
@@ -267,7 +330,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: '#FFFFFF',
     borderColor: '#9CA3AF',
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1.5,
     color: '#1A1A2E',
     fontSize: 16,
@@ -283,7 +346,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderColor: '#9CA3AF',
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1.5,
     flexDirection: 'row',
     gap: 6,
@@ -303,14 +366,14 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   optionDot: {
-    borderRadius: 5,
+    borderRadius: 999,
     height: 10,
     width: 10,
   },
   addButton: {
     alignItems: 'center',
     backgroundColor: '#1E3A5F',
-    borderRadius: 8,
+    borderRadius: 4,
     paddingVertical: 14,
   },
   addButtonText: {
@@ -342,7 +405,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
     borderColor: '#E2E8F0',
-    borderRadius: 10,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 12,
     padding: 14,
@@ -384,10 +447,35 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 6,
   },
+  streakBadge: {
+    backgroundColor: '#FFF7ED',
+    borderColor: '#FDBA74',
+    borderRadius: 4,
+    borderWidth: 1,
+    marginTop: 10,
+    padding: 10,
+  },
+  streakText: {
+    color: '#9A3412',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  noStreakBadge: {
+    backgroundColor: '#F9FAFB',
+    borderColor: '#E2E8F0',
+    borderRadius: 4,
+    borderWidth: 1,
+    marginTop: 10,
+    padding: 10,
+  },
+  noStreakText: {
+    color: '#64748B',
+    fontSize: 13,
+  },
   deleteButton: {
     backgroundColor: '#FEF2F2',
     borderColor: '#FCA5A5',
-    borderRadius: 6,
+    borderRadius: 4,
     borderWidth: 1,
     paddingHorizontal: 10,
     paddingVertical: 6,
