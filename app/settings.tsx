@@ -1,6 +1,7 @@
 import { db } from '@/db/client';
 import { categories as categoriesTable } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { useRouter } from 'expo-router';
 import { useContext, useState } from 'react';
 import {
     Pressable,
@@ -11,7 +12,7 @@ import {
     View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppContext } from '../_layout';
+import { AppContext } from './_layout';
 
 const COLOUR_OPTIONS = [
   '#3B82F6',
@@ -24,7 +25,8 @@ const COLOUR_OPTIONS = [
   '#F97316',
 ];
 
-export default function CategoriesScreen() {
+export default function SettingsScreen() {
+  const router = useRouter();
   const context = useContext(AppContext);
   const [name, setName] = useState('');
   const [selectedColour, setSelectedColour] = useState(COLOUR_OPTIONS[0]);
@@ -55,54 +57,50 @@ export default function CategoriesScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <Text style={styles.title}>Categories</Text>
-      <Text style={styles.subtitle}>{categories.length} categories</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Text style={styles.title}>Settings</Text>
 
-      <View style={styles.form}>
-        <Text style={styles.label}>New Category</Text>
-        <TextInput
-          accessibilityLabel="Category name"
-          placeholder="Category name"
-          value={name}
-          onChangeText={setName}
-          style={styles.input}
-        />
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Categories</Text>
 
-        <Text style={[styles.label, { marginTop: 10 }]}>Colour</Text>
-        <View style={styles.colourRow}>
-          {COLOUR_OPTIONS.map((colour) => (
-            <Pressable
-              key={colour}
-              accessibilityLabel={`Select colour ${colour}`}
-              accessibilityRole="button"
-              onPress={() => setSelectedColour(colour)}
-              style={[
-                styles.colourDot,
-                { backgroundColor: colour },
-                selectedColour === colour && styles.colourDotSelected,
-              ]}
+          <View style={styles.form}>
+            <Text style={styles.label}>New Category</Text>
+            <TextInput
+              accessibilityLabel="Category name"
+              placeholder="Category name"
+              value={name}
+              onChangeText={setName}
+              style={styles.input}
             />
-          ))}
-        </View>
 
-        <Pressable
-          accessibilityLabel="Add category"
-          accessibilityRole="button"
-          onPress={addCategory}
-          style={styles.addButton}
-        >
-          <Text style={styles.addButtonText}>Add Category</Text>
-        </Pressable>
-      </View>
+            <Text style={[styles.label, { marginTop: 10 }]}>Colour</Text>
+            <View style={styles.colourRow}>
+              {COLOUR_OPTIONS.map((colour) => (
+                <Pressable
+                  key={colour}
+                  accessibilityLabel={`Select colour ${colour}`}
+                  accessibilityRole="button"
+                  onPress={() => setSelectedColour(colour)}
+                  style={[
+                    styles.colourDot,
+                    { backgroundColor: colour },
+                    selectedColour === colour && styles.colourDotSelected,
+                  ]}
+                />
+              ))}
+            </View>
 
-      <ScrollView
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {categories.length === 0 ? (
-          <Text style={styles.emptyText}>No categories yet. Add one above.</Text>
-        ) : (
-          categories.map((cat) => (
+            <Pressable
+              accessibilityLabel="Add category"
+              accessibilityRole="button"
+              onPress={addCategory}
+              style={styles.addButton}
+            >
+              <Text style={styles.addButtonText}>Add Category</Text>
+            </Pressable>
+          </View>
+
+          {categories.map((cat) => (
             <View key={cat.id} style={styles.card}>
               <View style={styles.cardLeft}>
                 <View style={[styles.colourIndicator, { backgroundColor: cat.colour }]} />
@@ -117,8 +115,22 @@ export default function CategoriesScreen() {
                 <Text style={styles.deleteButtonText}>Delete</Text>
               </Pressable>
             </View>
-          ))
-        )}
+          ))}
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Account</Text>
+          <Text style={styles.placeholderText}>Login and account management coming soon.</Text>
+        </View>
+
+        <Pressable
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
+          <Text style={styles.backButtonText}>Back</Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
@@ -128,25 +140,29 @@ const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: '#F8FAFC',
     flex: 1,
-    paddingHorizontal: 18,
-    paddingTop: 10,
+    padding: 20,
   },
   title: {
     color: '#111827',
     fontSize: 28,
     fontWeight: '700',
+    marginBottom: 20,
   },
-  subtitle: {
-    color: '#6B7280',
-    fontSize: 14,
-    marginTop: 4,
+  section: {
+    marginBottom: 28,
+  },
+  sectionTitle: {
+    color: '#111827',
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 12,
   },
   form: {
     backgroundColor: '#FFFFFF',
     borderColor: '#E5E7EB',
     borderRadius: 14,
     borderWidth: 1,
-    marginTop: 16,
+    marginBottom: 12,
     padding: 14,
   },
   label: {
@@ -190,10 +206,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
   },
-  listContent: {
-    paddingBottom: 24,
-    paddingTop: 14,
-  },
   card: {
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
@@ -233,10 +245,21 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
   },
-  emptyText: {
-    color: '#475569',
-    fontSize: 16,
-    paddingTop: 8,
-    textAlign: 'center',
+  placeholderText: {
+    color: '#6B7280',
+    fontSize: 14,
+  },
+  backButton: {
+    alignItems: 'center',
+    backgroundColor: '#F8FAFC',
+    borderColor: '#94A3B8',
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingVertical: 12,
+  },
+  backButtonText: {
+    color: '#0F172A',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });
