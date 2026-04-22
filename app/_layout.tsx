@@ -127,6 +127,7 @@ export default function RootLayout() {
         <Stack.Screen name="settings" options={{ headerShown: true, title: 'Settings' }} />
         <Stack.Screen name="application/[id]" options={{ headerShown: true, title: 'Details' }} />
         <Stack.Screen name="application/[id]/edit" options={{ headerShown: true, title: 'Edit' }} />
+        <Stack.Screen name="browse" options={{ headerShown: true, title: 'Browse Jobs' }} />
       </Stack>
     </AppContext.Provider>
   );
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     backgroundColor: '#FEF2F2',
-    borderRadius: 10,
+    borderRadius: 4,
     color: '#991B1B',
     fontSize: 15,
     lineHeight: 22,

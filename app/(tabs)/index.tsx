@@ -77,6 +77,15 @@ export default function IndexScreen() {
         <Text style={styles.addButtonText}>+ New Application</Text>
       </Pressable>
 
+      <Pressable
+        accessibilityLabel="Browse remote jobs"
+        accessibilityRole="button"
+        onPress={() => router.push('/browse')}
+        style={styles.browseButton}
+      >
+        <Text style={styles.browseButtonText}>Browse Remote Jobs</Text>
+      </Pressable>
+
       <TextInput
         value={searchQuery}
         onChangeText={setSearchQuery}
@@ -209,11 +218,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#1E3A5F',
     borderRadius: 4,
-    marginBottom: 12,
+    marginBottom: 8,
     paddingVertical: 12,
   },
   addButtonText: {
     color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  browseButton: {
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#D97706',
+    borderRadius: 4,
+    borderWidth: 1.5,
+    marginBottom: 12,
+    paddingVertical: 12,
+  },
+  browseButtonText: {
+    color: '#D97706',
     fontSize: 15,
     fontWeight: '600',
   },
