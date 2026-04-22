@@ -81,6 +81,7 @@ export default function IndexScreen() {
         value={searchQuery}
         onChangeText={setSearchQuery}
         placeholder="Search by company or role..."
+        placeholderTextColor="#94A3B8"
         style={styles.searchInput}
         accessibilityLabel="Search applications"
       />
@@ -92,6 +93,7 @@ export default function IndexScreen() {
             value={dateFrom}
             onChangeText={setDateFrom}
             placeholder="YYYY-MM-DD"
+            placeholderTextColor="#94A3B8"
             style={styles.dateInput}
             accessibilityLabel="Filter from date"
           />
@@ -102,16 +104,19 @@ export default function IndexScreen() {
             value={dateTo}
             onChangeText={setDateTo}
             placeholder="YYYY-MM-DD"
+            placeholderTextColor="#94A3B8"
             style={styles.dateInput}
             accessibilityLabel="Filter to date"
           />
         </View>
       </View>
 
+      <Text style={styles.filterLabel}>Category</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
         <View style={styles.filterRow}>
           {categoryOptions.map((name) => {
             const isSelected = selectedCategory === name;
+            const cat = categories.find((c) => c.name === name);
             return (
               <Pressable
                 key={name}
@@ -120,9 +125,15 @@ export default function IndexScreen() {
                 onPress={() => setSelectedCategory(name)}
                 style={[
                   styles.filterButton,
-                  isSelected && styles.filterButtonSelected,
+                  isSelected && {
+                    backgroundColor: cat ? cat.colour : '#1E3A5F',
+                    borderColor: cat ? cat.colour : '#1E3A5F',
+                  },
                 ]}
               >
+                {cat && !isSelected ? (
+                  <View style={[styles.filterDot, { backgroundColor: cat.colour }]} />
+                ) : null}
                 <Text
                   style={[
                     styles.filterButtonText,
@@ -213,6 +224,8 @@ const styles = StyleSheet.create({
     borderColor: '#D1D5DB',
     borderRadius: 8,
     borderWidth: 1,
+    color: '#1A1A2E',
+    fontSize: 15,
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
@@ -226,7 +239,7 @@ const styles = StyleSheet.create({
   },
   dateLabel: {
     color: '#374151',
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
     marginBottom: 4,
   },
@@ -235,34 +248,45 @@ const styles = StyleSheet.create({
     borderColor: '#D1D5DB',
     borderRadius: 8,
     borderWidth: 1,
-    fontSize: 13,
+    color: '#1A1A2E',
+    fontSize: 14,
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
+  filterLabel: {
+    color: '#374151',
+    fontSize: 13,
+    fontWeight: '600',
+    marginTop: 12,
+    marginBottom: 6,
+  },
   filterScroll: {
-    marginTop: 10,
-    maxHeight: 44,
+    maxHeight: 48,
   },
   filterRow: {
     flexDirection: 'row',
     gap: 8,
   },
   filterButton: {
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderColor: '#D1D5DB',
-    borderRadius: 6,
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    borderColor: '#9CA3AF',
+    borderRadius: 8,
+    borderWidth: 1.5,
+    flexDirection: 'row',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
-  filterButtonSelected: {
-    backgroundColor: '#1E3A5F',
-    borderColor: '#1E3A5F',
+  filterDot: {
+    borderRadius: 5,
+    height: 10,
+    width: 10,
   },
   filterButtonText: {
-    color: '#374151',
-    fontSize: 13,
-    fontWeight: '500',
+    color: '#1A1A2E',
+    fontSize: 14,
+    fontWeight: '600',
   },
   filterButtonTextSelected: {
     color: '#FFFFFF',
@@ -275,7 +299,7 @@ const styles = StyleSheet.create({
   clearButtonText: {
     color: '#DC2626',
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   emptyState: {
     alignItems: 'center',

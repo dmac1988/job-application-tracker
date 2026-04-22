@@ -3,12 +3,12 @@ import { targets as targetsTable } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { useContext, useState } from 'react';
 import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppContext } from '../_layout';
@@ -106,7 +106,7 @@ export default function TargetsScreen() {
           </Pressable>
         </View>
 
-        <Text style={[styles.label, { marginTop: 10 }]}>Category (optional - leave blank for global)</Text>
+        <Text style={[styles.label, { marginTop: 10 }]}>Category (optional)</Text>
         <View style={styles.row}>
           <Pressable
             accessibilityLabel="Global target"
@@ -153,7 +153,12 @@ export default function TargetsScreen() {
 
       <ScrollView contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false}>
         {targets.length === 0 ? (
-          <Text style={styles.emptyText}>No targets set yet. Add one above.</Text>
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyTitle}>No targets set</Text>
+            <Text style={styles.emptyMessage}>
+              Add a weekly or monthly goal above to start tracking your progress.
+            </Text>
+          </View>
         ) : (
           targets.map((target) => {
             const progress = getProgress(target);
@@ -166,9 +171,14 @@ export default function TargetsScreen() {
             return (
               <View key={target.id} style={styles.card}>
                 <View style={styles.cardHeader}>
-                  <Text style={styles.cardTitle}>
-                    {target.period === 'weekly' ? 'Weekly' : 'Monthly'} Goal
-                  </Text>
+                  <View>
+                    <Text style={styles.cardTitle}>
+                      {target.period === 'weekly' ? 'Weekly' : 'Monthly'} Goal
+                    </Text>
+                    <Text style={styles.cardCategory}>
+                      {cat ? cat.name : 'All categories'}
+                    </Text>
+                  </View>
                   <Pressable
                     accessibilityLabel="Delete target"
                     accessibilityRole="button"
@@ -178,10 +188,6 @@ export default function TargetsScreen() {
                     <Text style={styles.deleteButtonText}>Delete</Text>
                   </Pressable>
                 </View>
-
-                <Text style={styles.cardCategory}>
-                  {cat ? cat.name : 'All categories'}
-                </Text>
 
                 <Text style={styles.progressText}>
                   {progress} / {target.goal} applications
@@ -193,7 +199,7 @@ export default function TargetsScreen() {
                       styles.progressFill,
                       {
                         width: `${percentage}%`,
-                        backgroundColor: met ? '#10B981' : '#3B82F6',
+                        backgroundColor: met ? '#059669' : '#1E3A5F',
                       },
                     ]}
                   />
@@ -213,39 +219,39 @@ export default function TargetsScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F9FAFB',
     flex: 1,
     paddingHorizontal: 18,
     paddingTop: 10,
   },
   title: {
-    color: '#111827',
-    fontSize: 28,
-    fontWeight: '700',
+    color: '#1A1A2E',
+    fontSize: 26,
+    fontWeight: '800',
   },
   subtitle: {
-    color: '#6B7280',
-    fontSize: 14,
+    color: '#64748B',
+    fontSize: 13,
     marginTop: 4,
   },
   form: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#E5E7EB',
-    borderRadius: 14,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
     borderWidth: 1,
     marginTop: 16,
     padding: 14,
   },
   label: {
-    color: '#334155',
+    color: '#374151',
     fontSize: 13,
     fontWeight: '600',
     marginBottom: 6,
   },
   input: {
-    backgroundColor: '#F8FAFC',
-    borderColor: '#CBD5E1',
-    borderRadius: 10,
+    backgroundColor: '#F9FAFB',
+    borderColor: '#D1D5DB',
+    borderRadius: 8,
     borderWidth: 1,
     fontSize: 15,
     paddingHorizontal: 12,
@@ -258,19 +264,19 @@ const styles = StyleSheet.create({
   },
   pill: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#94A3B8',
-    borderRadius: 999,
+    borderColor: '#D1D5DB',
+    borderRadius: 6,
     borderWidth: 1,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
   pillSelected: {
-    backgroundColor: '#0F172A',
-    borderColor: '#0F172A',
+    backgroundColor: '#1E3A5F',
+    borderColor: '#1E3A5F',
   },
   pillText: {
-    color: '#0F172A',
-    fontSize: 14,
+    color: '#374151',
+    fontSize: 13,
     fontWeight: '500',
   },
   pillTextSelected: {
@@ -278,8 +284,8 @@ const styles = StyleSheet.create({
   },
   addButton: {
     alignItems: 'center',
-    backgroundColor: '#0F766E',
-    borderRadius: 10,
+    backgroundColor: '#1E3A5F',
+    borderRadius: 8,
     marginTop: 14,
     paddingVertical: 11,
   },
@@ -292,26 +298,43 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     paddingTop: 14,
   },
+  emptyState: {
+    alignItems: 'center',
+    paddingTop: 40,
+    paddingHorizontal: 20,
+  },
+  emptyTitle: {
+    color: '#1A1A2E',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  emptyMessage: {
+    color: '#64748B',
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 8,
+    textAlign: 'center',
+  },
   card: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#E5E7EB',
-    borderRadius: 14,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
     borderWidth: 1,
     marginBottom: 12,
     padding: 14,
   },
   cardHeader: {
+    alignItems: 'flex-start',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
   },
   cardTitle: {
-    color: '#111827',
+    color: '#1A1A2E',
     fontSize: 16,
     fontWeight: '700',
   },
   cardCategory: {
-    color: '#6B7280',
+    color: '#64748B',
     fontSize: 13,
     marginTop: 2,
   },
@@ -319,17 +342,17 @@ const styles = StyleSheet.create({
     color: '#374151',
     fontSize: 14,
     fontWeight: '600',
-    marginTop: 10,
+    marginTop: 12,
   },
   progressBar: {
-    backgroundColor: '#E5E7EB',
-    borderRadius: 999,
+    backgroundColor: '#E2E8F0',
+    borderRadius: 4,
     height: 8,
     marginTop: 6,
     overflow: 'hidden',
   },
   progressFill: {
-    borderRadius: 999,
+    borderRadius: 4,
     height: 8,
   },
   statusText: {
@@ -340,20 +363,14 @@ const styles = StyleSheet.create({
   deleteButton: {
     backgroundColor: '#FEF2F2',
     borderColor: '#FCA5A5',
-    borderRadius: 8,
+    borderRadius: 6,
     borderWidth: 1,
     paddingHorizontal: 10,
     paddingVertical: 6,
   },
   deleteButtonText: {
-    color: '#7F1D1D',
+    color: '#991B1B',
     fontSize: 13,
     fontWeight: '600',
-  },
-  emptyText: {
-    color: '#475569',
-    fontSize: 16,
-    paddingTop: 8,
-    textAlign: 'center',
   },
 });

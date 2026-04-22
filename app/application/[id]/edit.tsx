@@ -33,29 +33,41 @@ export default function EditApplication() {
 
   if (!context || !application) return null;
 
-  const { categories, setApplications, setStatusLogs } = context;
+  const { categories, statusLogs, setApplications, setStatusLogs } = context;
+
+  const currentLogs = statusLogs
+    .filter((l) => l.applicationId === Number(id))
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  const currentStatus = currentLogs.length > 0 ? currentLogs[0].status : 'None';
 
   const STATUS_OPTIONS = ['Applied', 'Interviewing', 'Offered', 'Rejected', 'Withdrawn'];
 
   const saveChanges = async () => {
-    await db
-      .update(applicationsTable)
-      .set({ company, role, date, notes, categoryId: selectedCategoryId! })
-      .where(eq(applicationsTable.id, Number(id)));
+    try {
+      await db
+        .update(applicationsTable)
+        .set({ company, role, date, notes, categoryId: selectedCategoryId! })
+        .where(eq(applicationsTable.id, Number(id)));
 
-    if (newStatus) {
-      await db.insert(statusLogsTable).values({
-        applicationId: Number(id),
-        status: newStatus,
-        date: new Date().toISOString().split('T')[0],
-      });
+      if (newStatus && newStatus !== currentStatus) {
+        await db.insert(statusLogsTable).values({
+          applicationId: Number(id),
+          status: newStatus,
+          date: new Date().toISOString().split('T')[0],
+        });
+        console.log('Status updated to:', newStatus);
+      }
+
+      const apps = await db.select().from(applicationsTable);
+      const logs = await db.select().from(statusLogsTable);
+      setApplications(apps);
+      setStatusLogs(logs);
+      console.log('Saved:', apps.length, 'apps,', logs.length, 'logs');
+      router.back();
+    } catch (error) {
+      console.error('Error saving:', error);
     }
-
-    const apps = await db.select().from(applicationsTable);
-    const logs = await db.select().from(statusLogsTable);
-    setApplications(apps);
-    setStatusLogs(logs);
-    router.back();
   };
 
   return (
@@ -96,7 +108,7 @@ export default function EditApplication() {
 
         <View style={styles.field}>
           <Text style={styles.label}>Category</Text>
-          <View style={styles.categoryRow}>
+          <View style={styles.optionRow}>
             {categories.map((cat) => {
               const isSelected = selectedCategoryId === cat.id;
               return (
@@ -106,13 +118,13 @@ export default function EditApplication() {
                   accessibilityRole="button"
                   onPress={() => setSelectedCategoryId(cat.id)}
                   style={[
-                    styles.categoryButton,
+                    styles.optionButton,
                     isSelected && { backgroundColor: cat.colour, borderColor: cat.colour },
                   ]}
                 >
                   <Text
                     style={[
-                      styles.categoryButtonText,
+                      styles.optionButtonText,
                       isSelected && { color: '#FFFFFF' },
                     ]}
                   >
@@ -136,10 +148,12 @@ export default function EditApplication() {
         </View>
 
         <View style={styles.field}>
-          <Text style={styles.label}>Add Status Update</Text>
-          <View style={styles.categoryRow}>
+          <Text style={styles.label}>Update Status</Text>
+          <Text style={styles.currentStatus}>Current: {currentStatus}</Text>
+          <View style={styles.optionRow}>
             {STATUS_OPTIONS.map((status) => {
               const isSelected = newStatus === status;
+              const isCurrent = currentStatus === status;
               return (
                 <Pressable
                   key={status}
@@ -147,17 +161,19 @@ export default function EditApplication() {
                   accessibilityRole="button"
                   onPress={() => setNewStatus(isSelected ? '' : status)}
                   style={[
-                    styles.categoryButton,
+                    styles.optionButton,
+                    isCurrent && !isSelected && styles.currentButton,
                     isSelected && styles.statusSelected,
                   ]}
                 >
                   <Text
                     style={[
-                      styles.categoryButtonText,
+                      styles.optionButtonText,
                       isSelected && { color: '#FFFFFF' },
+                      isCurrent && !isSelected && { color: '#1E3A5F' },
                     ]}
                   >
-                    {status}
+                    {status}{isCurrent ? ' ✓' : ''}
                   </Text>
                 </Pressable>
               );
@@ -189,7 +205,7 @@ export default function EditApplication() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F9FAFB',
     flex: 1,
     padding: 20,
   },
@@ -197,12 +213,12 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   title: {
-    color: '#111827',
-    fontSize: 28,
-    fontWeight: '700',
+    color: '#1A1A2E',
+    fontSize: 26,
+    fontWeight: '800',
   },
   subtitle: {
-    color: '#6B7280',
+    color: '#64748B',
     fontSize: 14,
     marginTop: 4,
     marginBottom: 20,
@@ -211,15 +227,21 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
-    color: '#334155',
+    color: '#374151',
     fontSize: 13,
     fontWeight: '600',
     marginBottom: 6,
   },
+  currentStatus: {
+    color: '#1E3A5F',
+    fontSize: 13,
+    fontWeight: '500',
+    marginBottom: 8,
+  },
   input: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#CBD5E1',
-    borderRadius: 10,
+    borderColor: '#D1D5DB',
+    borderRadius: 8,
     borderWidth: 1,
     fontSize: 15,
     paddingHorizontal: 12,
@@ -229,32 +251,36 @@ const styles = StyleSheet.create({
     minHeight: 80,
     textAlignVertical: 'top',
   },
-  categoryRow: {
+  optionRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
   },
-  categoryButton: {
+  optionButton: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#94A3B8',
-    borderRadius: 999,
+    borderColor: '#D1D5DB',
+    borderRadius: 6,
     borderWidth: 1,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
-  categoryButtonText: {
-    color: '#0F172A',
-    fontSize: 14,
+  optionButtonText: {
+    color: '#374151',
+    fontSize: 13,
     fontWeight: '500',
   },
+  currentButton: {
+    borderColor: '#1E3A5F',
+    borderWidth: 2,
+  },
   statusSelected: {
-    backgroundColor: '#0F172A',
-    borderColor: '#0F172A',
+    backgroundColor: '#1E3A5F',
+    borderColor: '#1E3A5F',
   },
   primaryButton: {
     alignItems: 'center',
-    backgroundColor: '#0F766E',
-    borderRadius: 10,
+    backgroundColor: '#1E3A5F',
+    borderRadius: 8,
     marginTop: 8,
     paddingVertical: 12,
   },
@@ -265,15 +291,15 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    borderColor: '#94A3B8',
-    borderRadius: 10,
+    backgroundColor: '#F9FAFB',
+    borderColor: '#D1D5DB',
+    borderRadius: 8,
     borderWidth: 1,
     marginTop: 10,
     paddingVertical: 12,
   },
   secondaryButtonText: {
-    color: '#0F172A',
+    color: '#374151',
     fontSize: 15,
     fontWeight: '600',
   },

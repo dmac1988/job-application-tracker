@@ -18,7 +18,11 @@ export default function ApplicationCard({ application }: Props) {
 
   const appLogs = statusLogs
     .filter((l) => l.applicationId === application.id)
-    .sort((a, b) => b.date.localeCompare(a.date));
+    .sort((a, b) => {
+      const dateCompare = b.date.localeCompare(a.date);
+      if (dateCompare !== 0) return dateCompare;
+      return b.id - a.id;
+    });
   const latestStatus = appLogs.length > 0 ? appLogs[0].status : 'No status';
 
   const statusColour: Record<string, string> = {

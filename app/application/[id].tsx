@@ -25,9 +25,21 @@ export default function ApplicationDetail() {
   const category = categories.find((c) => c.id === application.categoryId);
   const logs = statusLogs
     .filter((l) => l.applicationId === Number(id))
-    .sort((a, b) => b.date.localeCompare(a.date));
+    .sort((a, b) => {
+      const dateCompare = b.date.localeCompare(a.date);
+      if (dateCompare !== 0) return dateCompare;
+      return b.id - a.id;
+    });
 
   const latestStatus = logs.length > 0 ? logs[0].status : 'No status';
+
+  const statusColour: Record<string, string> = {
+    Applied: '#2563EB',
+    Interviewing: '#D97706',
+    Offered: '#059669',
+    Rejected: '#DC2626',
+    Withdrawn: '#7C3AED',
+  };
 
   const deleteApplication = async () => {
     await db.delete(statusLogsTable).where(eq(statusLogsTable.applicationId, Number(id)));
@@ -48,16 +60,16 @@ export default function ApplicationDetail() {
 
         <View style={styles.infoRow}>
           {category ? (
-            <View style={[styles.tag, { backgroundColor: category.colour + '20' }]}>
+            <View style={[styles.tag, { backgroundColor: category.colour + '18' }]}>
               <Text style={[styles.tagText, { color: category.colour }]}>{category.name}</Text>
             </View>
           ) : null}
           <View style={styles.tag}>
             <Text style={styles.tagText}>{application.date}</Text>
           </View>
-          <View style={[styles.tag, { backgroundColor: '#ECFDF5' }]}>
-            <Text style={[styles.tagText, { color: '#059669' }]}>{latestStatus}</Text>
-          </View>
+          <Text style={[styles.statusBadge, { color: statusColour[latestStatus] || '#64748B' }]}>
+            {latestStatus}
+          </Text>
         </View>
 
         {application.notes ? (
@@ -70,11 +82,16 @@ export default function ApplicationDetail() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Status History</Text>
           {logs.length === 0 ? (
-            <Text style={styles.emptyText}>No status updates yet</Text>
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyTitle}>No status updates</Text>
+              <Text style={styles.emptyMessage}>Tap Edit to add a status update.</Text>
+            </View>
           ) : (
-            logs.map((log) => (
-              <View key={log.id} style={styles.logRow}>
-                <Text style={styles.logStatus}>{log.status}</Text>
+            logs.map((log, index) => (
+              <View key={log.id} style={[styles.logRow, index === 0 && styles.logRowLatest]}>
+                <Text style={[styles.logStatus, index === 0 && { color: statusColour[log.status] || '#374151' }]}>
+                  {log.status}{index === 0 ? ' (latest)' : ''}
+                </Text>
                 <Text style={styles.logDate}>{log.date}</Text>
               </View>
             ))
@@ -105,41 +122,47 @@ export default function ApplicationDetail() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F9FAFB',
     flex: 1,
     padding: 20,
   },
   company: {
-    color: '#111827',
-    fontSize: 28,
-    fontWeight: '700',
+    color: '#1A1A2E',
+    fontSize: 26,
+    fontWeight: '800',
   },
   role: {
-    color: '#6B7280',
+    color: '#64748B',
     fontSize: 16,
     marginTop: 4,
   },
   infoRow: {
+    alignItems: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
     marginTop: 14,
   },
   tag: {
-    backgroundColor: '#EFF6FF',
-    borderRadius: 999,
+    backgroundColor: '#F1F5F9',
+    borderRadius: 6,
     paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingVertical: 5,
   },
   tagText: {
     fontSize: 12,
     fontWeight: '600',
   },
+  statusBadge: {
+    fontSize: 13,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
   section: {
     marginTop: 24,
   },
   sectionTitle: {
-    color: '#111827',
+    color: '#1A1A2E',
     fontSize: 18,
     fontWeight: '700',
     marginBottom: 10,
@@ -149,33 +172,46 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
   },
-  emptyText: {
-    color: '#6B7280',
-    fontSize: 14,
+  emptyState: {
+    paddingVertical: 12,
+  },
+  emptyTitle: {
+    color: '#374151',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  emptyMessage: {
+    color: '#64748B',
+    fontSize: 13,
+    marginTop: 4,
   },
   logRow: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#E5E7EB',
-    borderRadius: 10,
+    borderColor: '#E2E8F0',
+    borderRadius: 8,
     borderWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 8,
     padding: 12,
   },
+  logRowLatest: {
+    borderColor: '#1E3A5F',
+    borderWidth: 2,
+  },
   logStatus: {
-    color: '#111827',
+    color: '#374151',
     fontSize: 15,
     fontWeight: '600',
   },
   logDate: {
-    color: '#6B7280',
+    color: '#64748B',
     fontSize: 14,
   },
   primaryButton: {
     alignItems: 'center',
-    backgroundColor: '#0F766E',
-    borderRadius: 10,
+    backgroundColor: '#1E3A5F',
+    borderRadius: 8,
     marginTop: 24,
     paddingVertical: 12,
   },
@@ -188,13 +224,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FEF2F2',
     borderColor: '#FCA5A5',
-    borderRadius: 10,
+    borderRadius: 8,
     borderWidth: 1,
     marginTop: 10,
     paddingVertical: 12,
   },
   dangerButtonText: {
-    color: '#7F1D1D',
+    color: '#991B1B',
     fontSize: 15,
     fontWeight: '600',
   },
