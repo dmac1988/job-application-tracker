@@ -1,9 +1,12 @@
 import { db } from '@/db/client';
 import { categories as categoriesTable, users as usersTable } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { File, Paths } from 'expo-file-system/next';
 import { useRouter } from 'expo-router';
+import * as Sharing from 'expo-sharing';
 import { useContext, useState } from 'react';
 import {
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -33,10 +36,11 @@ export default function SettingsScreen() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editName, setEditName] = useState('');
   const [editColour, setEditColour] = useState('');
+  const [exporting, setExporting] = useState(false);
 
   if (!context) return null;
 
-  const { user, setUser, categories, setCategories } = context;
+  const { user, setUser, categories, setCategories, applications, statusLogs } = context;
 
   const addCategory = async () => {
     if (!name.trim()) return;
@@ -97,6 +101,51 @@ export default function SettingsScreen() {
     router.replace('/login');
   };
 
+  const exportCSV = async () => {
+    try {
+      setExporting(true);
+
+      const header = 'Company,Role,Date,Category,Status,Notes\n';
+      const rows = applications.map((app) => {
+        const cat = categories.find((c) => c.id === app.categoryId);
+        const appLogs = statusLogs
+          .filter((l) => l.applicationId === app.id)
+          .sort((a, b) => {
+            const dateCompare = b.date.localeCompare(a.date);
+            if (dateCompare !== 0) return dateCompare;
+            return b.id - a.id;
+          });
+        const latestStatus = appLogs.length > 0 ? appLogs[0].status : 'Unknown';
+
+        const escape = (val: string) => `"${(val || '').replace(/"/g, '""')}"`;
+
+        return [
+          escape(app.company),
+          escape(app.role),
+          escape(app.date),
+          escape(cat?.name || ''),
+          escape(latestStatus),
+          escape(app.notes || ''),
+        ].join(',');
+      });
+
+      const csv = header + rows.join('\n');
+      const file = new File(Paths.cache, 'applications.csv');
+      file.create();
+      file.write(csv);
+
+      await Sharing.shareAsync(file.uri, {
+        mimeType: 'text/csv',
+        dialogTitle: 'Export Applications',
+      });
+    } catch (error) {
+      Alert.alert('Export Failed', 'Something went wrong exporting your data.');
+      console.error('Export error:', error);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -108,6 +157,18 @@ export default function SettingsScreen() {
             <Text style={styles.accountLabel}>Logged in as</Text>
             <Text style={styles.accountUsername}>{user?.username ?? 'Guest'}</Text>
           </View>
+
+          <Pressable
+            accessibilityLabel="Export applications to CSV"
+            accessibilityRole="button"
+            onPress={exportCSV}
+            disabled={exporting}
+            style={styles.exportButton}
+          >
+            <Text style={styles.exportButtonText}>
+              {exporting ? 'Exporting...' : 'Export Applications (CSV)'}
+            </Text>
+          </Pressable>
 
           <Pressable
             accessibilityLabel="Logout"
@@ -286,7 +347,7 @@ const styles = StyleSheet.create({
   accountCard: {
     backgroundColor: '#FFFFFF',
     borderColor: '#E2E8F0',
-    borderRadius: 10,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 12,
     padding: 16,
@@ -302,10 +363,22 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     marginTop: 4,
   },
+  exportButton: {
+    alignItems: 'center',
+    backgroundColor: '#1E3A5F',
+    borderRadius: 4,
+    marginBottom: 10,
+    paddingVertical: 14,
+  },
+  exportButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   form: {
     backgroundColor: '#FFFFFF',
     borderColor: '#E2E8F0',
-    borderRadius: 10,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 12,
     padding: 16,
@@ -322,7 +395,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: '#FFFFFF',
     borderColor: '#9CA3AF',
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1.5,
     color: '#1A1A2E',
     fontSize: 16,
@@ -351,7 +424,7 @@ const styles = StyleSheet.create({
   addButton: {
     alignItems: 'center',
     backgroundColor: '#1E3A5F',
-    borderRadius: 8,
+    borderRadius: 4,
     paddingVertical: 14,
   },
   addButtonText: {
@@ -362,7 +435,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
     borderColor: '#E2E8F0',
-    borderRadius: 10,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 10,
     padding: 14,
@@ -390,7 +463,7 @@ const styles = StyleSheet.create({
   editButton: {
     backgroundColor: '#EFF6FF',
     borderColor: '#93C5FD',
-    borderRadius: 6,
+    borderRadius: 4,
     borderWidth: 1.5,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -403,7 +476,7 @@ const styles = StyleSheet.create({
   deleteSmall: {
     backgroundColor: '#FEF2F2',
     borderColor: '#FCA5A5',
-    borderRadius: 6,
+    borderRadius: 4,
     borderWidth: 1.5,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -422,7 +495,7 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: '#1E3A5F',
-    borderRadius: 6,
+    borderRadius: 4,
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
@@ -434,7 +507,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: '#F9FAFB',
     borderColor: '#9CA3AF',
-    borderRadius: 6,
+    borderRadius: 4,
     borderWidth: 1.5,
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -448,7 +521,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F9FAFB',
     borderColor: '#9CA3AF',
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1.5,
     marginBottom: 10,
     paddingVertical: 14,
@@ -462,7 +535,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FEF2F2',
     borderColor: '#FCA5A5',
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1.5,
     marginBottom: 10,
     paddingVertical: 14,
@@ -476,7 +549,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F9FAFB',
     borderColor: '#9CA3AF',
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1.5,
     paddingVertical: 14,
   },
