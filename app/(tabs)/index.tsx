@@ -1,4 +1,5 @@
 import ApplicationCard from '@/components/ApplicationCard';
+import { useRouter } from 'expo-router';
 import { useContext, useState } from 'react';
 import {
   Pressable,
@@ -12,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppContext, Application } from '../_layout';
 
 export default function IndexScreen() {
+  const router = useRouter();
   const context = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -45,6 +47,15 @@ export default function IndexScreen() {
         <Text style={styles.title}>Applications</Text>
         <Text style={styles.subtitle}>{applications.length} tracked</Text>
       </View>
+
+      <Pressable
+        accessibilityLabel="Add application"
+        accessibilityRole="button"
+        onPress={() => router.push('/add')}
+        style={styles.addButton}
+      >
+        <Text style={styles.addButtonText}>Add Application</Text>
+      </Pressable>
 
       <TextInput
         value={searchQuery}
@@ -116,6 +127,18 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     fontSize: 14,
     marginTop: 4,
+  },
+  addButton: {
+    alignItems: 'center',
+    backgroundColor: '#0F766E',
+    borderRadius: 10,
+    marginBottom: 14,
+    paddingVertical: 11,
+  },
+  addButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '600',
   },
   searchInput: {
     backgroundColor: '#FFFFFF',
