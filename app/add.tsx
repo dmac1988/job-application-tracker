@@ -57,7 +57,8 @@ export default function AddApplication() {
           <Text style={styles.label}>Company</Text>
           <TextInput
             accessibilityLabel="Company"
-            placeholder="Company name"
+            placeholder="e.g. Google, Stripe, Meta"
+            placeholderTextColor="#94A3B8"
             value={company}
             onChangeText={setCompany}
             style={styles.input}
@@ -68,7 +69,8 @@ export default function AddApplication() {
           <Text style={styles.label}>Role</Text>
           <TextInput
             accessibilityLabel="Role"
-            placeholder="Job title"
+            placeholder="e.g. Software Engineer"
+            placeholderTextColor="#94A3B8"
             value={role}
             onChangeText={setRole}
             style={styles.input}
@@ -76,10 +78,11 @@ export default function AddApplication() {
         </View>
 
         <View style={styles.field}>
-          <Text style={styles.label}>Date (YYYY-MM-DD)</Text>
+          <Text style={styles.label}>Date Applied</Text>
           <TextInput
             accessibilityLabel="Date"
-            placeholder="2026-04-22"
+            placeholder="YYYY-MM-DD"
+            placeholderTextColor="#94A3B8"
             value={date}
             onChangeText={setDate}
             style={styles.input}
@@ -88,7 +91,7 @@ export default function AddApplication() {
 
         <View style={styles.field}>
           <Text style={styles.label}>Category</Text>
-          <View style={styles.categoryRow}>
+          <View style={styles.optionRow}>
             {categories.map((cat) => {
               const isSelected = selectedCategoryId === cat.id;
               return (
@@ -98,13 +101,16 @@ export default function AddApplication() {
                   accessibilityRole="button"
                   onPress={() => setSelectedCategoryId(cat.id)}
                   style={[
-                    styles.categoryButton,
+                    styles.optionButton,
                     isSelected && { backgroundColor: cat.colour, borderColor: cat.colour },
                   ]}
                 >
+                  {!isSelected ? (
+                    <View style={[styles.optionDot, { backgroundColor: cat.colour }]} />
+                  ) : null}
                   <Text
                     style={[
-                      styles.categoryButtonText,
+                      styles.optionButtonText,
                       isSelected && { color: '#FFFFFF' },
                     ]}
                   >
@@ -120,7 +126,8 @@ export default function AddApplication() {
           <Text style={styles.label}>Notes (optional)</Text>
           <TextInput
             accessibilityLabel="Notes"
-            placeholder="Any extra details"
+            placeholder="Any extra details about this application..."
+            placeholderTextColor="#94A3B8"
             value={notes}
             onChangeText={setNotes}
             multiline
@@ -152,7 +159,7 @@ export default function AddApplication() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F9FAFB',
     flex: 1,
     padding: 20,
   },
@@ -160,80 +167,89 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   title: {
-    color: '#111827',
-    fontSize: 28,
-    fontWeight: '700',
+    color: '#1A1A2E',
+    fontSize: 26,
+    fontWeight: '800',
   },
   subtitle: {
-    color: '#6B7280',
+    color: '#64748B',
     fontSize: 14,
     marginTop: 4,
     marginBottom: 20,
   },
   field: {
-    marginBottom: 16,
+    marginBottom: 18,
   },
   label: {
-    color: '#334155',
-    fontSize: 13,
+    color: '#374151',
+    fontSize: 14,
     fontWeight: '600',
     marginBottom: 6,
   },
   input: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#CBD5E1',
-    borderRadius: 10,
-    borderWidth: 1,
-    fontSize: 15,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderColor: '#9CA3AF',
+    borderRadius: 8,
+    borderWidth: 1.5,
+    color: '#1A1A2E',
+    fontSize: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
   },
   textArea: {
-    minHeight: 80,
+    minHeight: 90,
     textAlignVertical: 'top',
   },
-  categoryRow: {
+  optionRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
   },
-  categoryButton: {
+  optionButton: {
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderColor: '#94A3B8',
-    borderRadius: 999,
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    borderColor: '#9CA3AF',
+    borderRadius: 8,
+    borderWidth: 1.5,
+    flexDirection: 'row',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
-  categoryButtonText: {
-    color: '#0F172A',
+  optionDot: {
+    borderRadius: 5,
+    height: 10,
+    width: 10,
+  },
+  optionButtonText: {
+    color: '#1A1A2E',
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   primaryButton: {
     alignItems: 'center',
-    backgroundColor: '#0F766E',
-    borderRadius: 10,
+    backgroundColor: '#1E3A5F',
+    borderRadius: 8,
     marginTop: 8,
-    paddingVertical: 12,
+    paddingVertical: 14,
   },
   primaryButtonText: {
     color: '#FFFFFF',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
   },
   secondaryButton: {
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    borderColor: '#94A3B8',
-    borderRadius: 10,
-    borderWidth: 1,
+    backgroundColor: '#F9FAFB',
+    borderColor: '#9CA3AF',
+    borderRadius: 8,
+    borderWidth: 1.5,
     marginTop: 10,
-    paddingVertical: 12,
+    paddingVertical: 14,
   },
   secondaryButtonText: {
-    color: '#0F172A',
-    fontSize: 15,
+    color: '#374151',
+    fontSize: 16,
     fontWeight: '600',
   },
 });

@@ -72,73 +72,86 @@ export default function TargetsScreen() {
       <Text style={styles.subtitle}>Set application goals and track progress</Text>
 
       <View style={styles.form}>
-        <Text style={styles.label}>Goal (number of applications)</Text>
-        <TextInput
-          accessibilityLabel="Goal"
-          placeholder="e.g. 5"
-          value={goal}
-          onChangeText={setGoal}
-          keyboardType="numeric"
-          style={styles.input}
-        />
-
-        <Text style={[styles.label, { marginTop: 10 }]}>Period</Text>
-        <View style={styles.row}>
-          <Pressable
-            accessibilityLabel="Set weekly period"
-            accessibilityRole="button"
-            onPress={() => setPeriod('weekly')}
-            style={[styles.pill, period === 'weekly' && styles.pillSelected]}
-          >
-            <Text style={[styles.pillText, period === 'weekly' && styles.pillTextSelected]}>
-              Weekly
-            </Text>
-          </Pressable>
-          <Pressable
-            accessibilityLabel="Set monthly period"
-            accessibilityRole="button"
-            onPress={() => setPeriod('monthly')}
-            style={[styles.pill, period === 'monthly' && styles.pillSelected]}
-          >
-            <Text style={[styles.pillText, period === 'monthly' && styles.pillTextSelected]}>
-              Monthly
-            </Text>
-          </Pressable>
+        <View style={styles.field}>
+          <Text style={styles.label}>Goal (number of applications)</Text>
+          <TextInput
+            accessibilityLabel="Goal"
+            placeholder="e.g. 5"
+            placeholderTextColor="#94A3B8"
+            value={goal}
+            onChangeText={setGoal}
+            keyboardType="numeric"
+            style={styles.input}
+          />
         </View>
 
-        <Text style={[styles.label, { marginTop: 10 }]}>Category (optional)</Text>
-        <View style={styles.row}>
-          <Pressable
-            accessibilityLabel="Global target"
-            accessibilityRole="button"
-            onPress={() => setSelectedCategoryId(null)}
-            style={[styles.pill, selectedCategoryId === null && styles.pillSelected]}
-          >
-            <Text style={[styles.pillText, selectedCategoryId === null && styles.pillTextSelected]}>
-              All
-            </Text>
-          </Pressable>
-          {categories.map((cat) => (
+        <View style={styles.field}>
+          <Text style={styles.label}>Period</Text>
+          <View style={styles.optionRow}>
             <Pressable
-              key={cat.id}
-              accessibilityLabel={`Target for ${cat.name}`}
+              accessibilityLabel="Set weekly period"
               accessibilityRole="button"
-              onPress={() => setSelectedCategoryId(cat.id)}
-              style={[
-                styles.pill,
-                selectedCategoryId === cat.id && { backgroundColor: cat.colour, borderColor: cat.colour },
-              ]}
+              onPress={() => setPeriod('weekly')}
+              style={[styles.optionButton, period === 'weekly' && styles.optionSelected]}
             >
-              <Text
-                style={[
-                  styles.pillText,
-                  selectedCategoryId === cat.id && { color: '#FFFFFF' },
-                ]}
-              >
-                {cat.name}
+              <Text style={[styles.optionText, period === 'weekly' && styles.optionTextSelected]}>
+                Weekly
               </Text>
             </Pressable>
-          ))}
+            <Pressable
+              accessibilityLabel="Set monthly period"
+              accessibilityRole="button"
+              onPress={() => setPeriod('monthly')}
+              style={[styles.optionButton, period === 'monthly' && styles.optionSelected]}
+            >
+              <Text style={[styles.optionText, period === 'monthly' && styles.optionTextSelected]}>
+                Monthly
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+
+        <View style={styles.field}>
+          <Text style={styles.label}>Category (optional)</Text>
+          <View style={styles.optionRow}>
+            <Pressable
+              accessibilityLabel="Global target"
+              accessibilityRole="button"
+              onPress={() => setSelectedCategoryId(null)}
+              style={[styles.optionButton, selectedCategoryId === null && styles.optionSelected]}
+            >
+              <Text style={[styles.optionText, selectedCategoryId === null && styles.optionTextSelected]}>
+                All
+              </Text>
+            </Pressable>
+            {categories.map((cat) => {
+              const isSelected = selectedCategoryId === cat.id;
+              return (
+                <Pressable
+                  key={cat.id}
+                  accessibilityLabel={`Target for ${cat.name}`}
+                  accessibilityRole="button"
+                  onPress={() => setSelectedCategoryId(cat.id)}
+                  style={[
+                    styles.optionButton,
+                    isSelected && { backgroundColor: cat.colour, borderColor: cat.colour },
+                  ]}
+                >
+                  {!isSelected ? (
+                    <View style={[styles.optionDot, { backgroundColor: cat.colour }]} />
+                  ) : null}
+                  <Text
+                    style={[
+                      styles.optionText,
+                      isSelected && { color: '#FFFFFF' },
+                    ]}
+                  >
+                    {cat.name}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
 
         <Pressable
@@ -240,58 +253,69 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     marginTop: 16,
-    padding: 14,
+    padding: 16,
+  },
+  field: {
+    marginBottom: 16,
   },
   label: {
     color: '#374151',
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     marginBottom: 6,
   },
   input: {
-    backgroundColor: '#F9FAFB',
-    borderColor: '#D1D5DB',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#9CA3AF',
     borderRadius: 8,
-    borderWidth: 1,
-    fontSize: 15,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderWidth: 1.5,
+    color: '#1A1A2E',
+    fontSize: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
   },
-  row: {
+  optionRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
   },
-  pill: {
+  optionButton: {
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderColor: '#D1D5DB',
-    borderRadius: 6,
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    borderColor: '#9CA3AF',
+    borderRadius: 8,
+    borderWidth: 1.5,
+    flexDirection: 'row',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
-  pillSelected: {
+  optionSelected: {
     backgroundColor: '#1E3A5F',
     borderColor: '#1E3A5F',
   },
-  pillText: {
-    color: '#374151',
-    fontSize: 13,
-    fontWeight: '500',
+  optionText: {
+    color: '#1A1A2E',
+    fontSize: 14,
+    fontWeight: '600',
   },
-  pillTextSelected: {
+  optionTextSelected: {
     color: '#FFFFFF',
+  },
+  optionDot: {
+    borderRadius: 5,
+    height: 10,
+    width: 10,
   },
   addButton: {
     alignItems: 'center',
     backgroundColor: '#1E3A5F',
     borderRadius: 8,
-    marginTop: 14,
-    paddingVertical: 11,
+    paddingVertical: 14,
   },
   addButtonText: {
     color: '#FFFFFF',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
   },
   listContent: {

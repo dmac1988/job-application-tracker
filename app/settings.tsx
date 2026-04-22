@@ -132,30 +132,35 @@ export default function SettingsScreen() {
           <Text style={styles.sectionTitle}>Categories</Text>
 
           <View style={styles.form}>
-            <Text style={styles.label}>New Category</Text>
-            <TextInput
-              accessibilityLabel="Category name"
-              placeholder="Category name"
-              value={name}
-              onChangeText={setName}
-              style={styles.input}
-            />
+            <View style={styles.field}>
+              <Text style={styles.label}>New Category</Text>
+              <TextInput
+                accessibilityLabel="Category name"
+                placeholder="e.g. Data Science, UX Design"
+                placeholderTextColor="#94A3B8"
+                value={name}
+                onChangeText={setName}
+                style={styles.input}
+              />
+            </View>
 
-            <Text style={[styles.label, { marginTop: 10 }]}>Colour</Text>
-            <View style={styles.colourRow}>
-              {COLOUR_OPTIONS.map((colour) => (
-                <Pressable
-                  key={colour}
-                  accessibilityLabel={`Select colour ${colour}`}
-                  accessibilityRole="button"
-                  onPress={() => setSelectedColour(colour)}
-                  style={[
-                    styles.colourDot,
-                    { backgroundColor: colour },
-                    selectedColour === colour && styles.colourDotSelected,
-                  ]}
-                />
-              ))}
+            <View style={styles.field}>
+              <Text style={styles.label}>Colour</Text>
+              <View style={styles.colourRow}>
+                {COLOUR_OPTIONS.map((colour) => (
+                  <Pressable
+                    key={colour}
+                    accessibilityLabel={`Select colour ${colour}`}
+                    accessibilityRole="button"
+                    onPress={() => setSelectedColour(colour)}
+                    style={[
+                      styles.colourDot,
+                      { backgroundColor: colour },
+                      selectedColour === colour && styles.colourDotSelected,
+                    ]}
+                  />
+                ))}
+              </View>
             </View>
 
             <Pressable
@@ -174,9 +179,11 @@ export default function SettingsScreen() {
                 <View style={styles.editForm}>
                   <TextInput
                     accessibilityLabel="Edit category name"
+                    placeholder="Category name"
+                    placeholderTextColor="#94A3B8"
                     value={editName}
                     onChangeText={setEditName}
-                    style={styles.editInput}
+                    style={styles.input}
                   />
                   <View style={styles.colourRow}>
                     {COLOUR_OPTIONS.map((colour) => (
@@ -257,65 +264,70 @@ export default function SettingsScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F9FAFB',
     flex: 1,
     padding: 20,
   },
   title: {
-    color: '#111827',
-    fontSize: 28,
-    fontWeight: '700',
+    color: '#1A1A2E',
+    fontSize: 26,
+    fontWeight: '800',
     marginBottom: 20,
   },
   section: {
     marginBottom: 28,
   },
   sectionTitle: {
-    color: '#111827',
+    color: '#1A1A2E',
     fontSize: 20,
     fontWeight: '700',
     marginBottom: 12,
   },
   accountCard: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#E5E7EB',
-    borderRadius: 14,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
     borderWidth: 1,
     marginBottom: 12,
-    padding: 14,
+    padding: 16,
   },
   accountLabel: {
-    color: '#6B7280',
+    color: '#64748B',
     fontSize: 13,
+    fontWeight: '500',
   },
   accountUsername: {
-    color: '#0F766E',
-    fontSize: 18,
-    fontWeight: '700',
+    color: '#1E3A5F',
+    fontSize: 20,
+    fontWeight: '800',
     marginTop: 4,
   },
   form: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#E5E7EB',
-    borderRadius: 14,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
     borderWidth: 1,
     marginBottom: 12,
-    padding: 14,
+    padding: 16,
+  },
+  field: {
+    marginBottom: 16,
   },
   label: {
-    color: '#334155',
-    fontSize: 13,
+    color: '#374151',
+    fontSize: 14,
     fontWeight: '600',
     marginBottom: 6,
   },
   input: {
-    backgroundColor: '#F8FAFC',
-    borderColor: '#CBD5E1',
-    borderRadius: 10,
-    borderWidth: 1,
-    fontSize: 15,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#9CA3AF',
+    borderRadius: 8,
+    borderWidth: 1.5,
+    color: '#1A1A2E',
+    fontSize: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
   },
   colourRow: {
     flexDirection: 'row',
@@ -324,34 +336,33 @@ const styles = StyleSheet.create({
   },
   colourDot: {
     borderRadius: 999,
-    height: 32,
-    width: 32,
+    height: 36,
+    width: 36,
   },
   colourDotSmall: {
     borderRadius: 999,
-    height: 24,
-    width: 24,
+    height: 28,
+    width: 28,
   },
   colourDotSelected: {
-    borderColor: '#0F172A',
+    borderColor: '#1A1A2E',
     borderWidth: 3,
   },
   addButton: {
     alignItems: 'center',
-    backgroundColor: '#0F766E',
-    borderRadius: 10,
-    marginTop: 14,
-    paddingVertical: 11,
+    backgroundColor: '#1E3A5F',
+    borderRadius: 8,
+    paddingVertical: 14,
   },
   addButtonText: {
     color: '#FFFFFF',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
   },
   card: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#E5E7EB',
-    borderRadius: 14,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
     borderWidth: 1,
     marginBottom: 10,
     padding: 14,
@@ -363,11 +374,11 @@ const styles = StyleSheet.create({
   },
   colourIndicator: {
     borderRadius: 999,
-    height: 14,
-    width: 14,
+    height: 16,
+    width: 16,
   },
   cardName: {
-    color: '#111827',
+    color: '#1A1A2E',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -379,108 +390,99 @@ const styles = StyleSheet.create({
   editButton: {
     backgroundColor: '#EFF6FF',
     borderColor: '#93C5FD',
-    borderRadius: 8,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   editButtonText: {
     color: '#1D4ED8',
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
   },
   deleteSmall: {
     backgroundColor: '#FEF2F2',
     borderColor: '#FCA5A5',
-    borderRadius: 8,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   deleteSmallText: {
-    color: '#7F1D1D',
-    fontSize: 13,
+    color: '#991B1B',
+    fontSize: 14,
     fontWeight: '600',
   },
   editForm: {
-    gap: 10,
-  },
-  editInput: {
-    backgroundColor: '#F8FAFC',
-    borderColor: '#CBD5E1',
-    borderRadius: 10,
-    borderWidth: 1,
-    fontSize: 15,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    gap: 12,
   },
   editActions: {
     flexDirection: 'row',
     gap: 8,
   },
   saveButton: {
-    backgroundColor: '#0F766E',
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    backgroundColor: '#1E3A5F',
+    borderRadius: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
   saveButtonText: {
     color: '#FFFFFF',
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
   },
   cancelButton: {
-    backgroundColor: '#F8FAFC',
-    borderColor: '#94A3B8',
-    borderRadius: 8,
-    borderWidth: 1,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    backgroundColor: '#F9FAFB',
+    borderColor: '#9CA3AF',
+    borderRadius: 6,
+    borderWidth: 1.5,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
   cancelButtonText: {
-    color: '#0F172A',
-    fontSize: 13,
+    color: '#374151',
+    fontSize: 14,
     fontWeight: '600',
   },
   secondaryButton: {
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    borderColor: '#94A3B8',
-    borderRadius: 10,
-    borderWidth: 1,
+    backgroundColor: '#F9FAFB',
+    borderColor: '#9CA3AF',
+    borderRadius: 8,
+    borderWidth: 1.5,
     marginBottom: 10,
-    paddingVertical: 12,
+    paddingVertical: 14,
   },
   secondaryButtonText: {
-    color: '#0F172A',
-    fontSize: 15,
+    color: '#374151',
+    fontSize: 16,
     fontWeight: '600',
   },
   dangerButton: {
     alignItems: 'center',
     backgroundColor: '#FEF2F2',
     borderColor: '#FCA5A5',
-    borderRadius: 10,
-    borderWidth: 1,
+    borderRadius: 8,
+    borderWidth: 1.5,
     marginBottom: 10,
-    paddingVertical: 12,
+    paddingVertical: 14,
   },
   dangerButtonText: {
-    color: '#7F1D1D',
-    fontSize: 15,
+    color: '#991B1B',
+    fontSize: 16,
     fontWeight: '600',
   },
   backButton: {
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    borderColor: '#94A3B8',
-    borderRadius: 10,
-    borderWidth: 1,
-    paddingVertical: 12,
+    backgroundColor: '#F9FAFB',
+    borderColor: '#9CA3AF',
+    borderRadius: 8,
+    borderWidth: 1.5,
+    paddingVertical: 14,
   },
   backButtonText: {
-    color: '#0F172A',
-    fontSize: 15,
+    color: '#374151',
+    fontSize: 16,
     fontWeight: '600',
   },
 });

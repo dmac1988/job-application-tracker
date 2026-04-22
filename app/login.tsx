@@ -78,8 +78,8 @@ export default function LoginScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.brandBlock}>
-          <Text style={styles.brandName}>JobTrack</Text>
-          <Text style={styles.brandTagline}>Stay on top of every application</Text>
+          <Text style={styles.brandName}>ByeUnemployment 👋</Text>
+          <Text style={styles.brandTagline}>Make your parents proud. Get a job</Text>
         </View>
 
         <Text style={styles.formTitle}>
@@ -92,7 +92,8 @@ export default function LoginScreen() {
           <Text style={styles.label}>Username</Text>
           <TextInput
             accessibilityLabel="Username"
-            placeholder="Enter username"
+            placeholder="Enter your username"
+            placeholderTextColor="#94A3B8"
             value={username}
             onChangeText={(text) => { setUsername(text); setError(''); }}
             autoCapitalize="none"
@@ -104,7 +105,8 @@ export default function LoginScreen() {
           <Text style={styles.label}>Password</Text>
           <TextInput
             accessibilityLabel="Password"
-            placeholder="Enter password"
+            placeholder="Enter your password"
+            placeholderTextColor="#94A3B8"
             value={password}
             onChangeText={(text) => { setPassword(text); setError(''); }}
             secureTextEntry
@@ -152,15 +154,14 @@ const styles = StyleSheet.create({
   },
   brandBlock: {
     backgroundColor: '#1E3A5F',
-    borderRadius: 12,
+    borderRadius: 4,
     marginBottom: 28,
     padding: 24,
   },
   brandName: {
     color: '#FFFFFF',
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: '800',
-    letterSpacing: 1,
   },
   brandTagline: {
     color: '#94B8DB',
@@ -176,35 +177,37 @@ const styles = StyleSheet.create({
   error: {
     backgroundColor: '#FEF2F2',
     borderColor: '#FCA5A5',
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     color: '#991B1B',
     fontSize: 14,
+    fontWeight: '500',
     marginBottom: 16,
-    padding: 10,
+    padding: 12,
   },
   field: {
-    marginBottom: 16,
+    marginBottom: 18,
   },
   label: {
     color: '#374151',
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     marginBottom: 6,
   },
   input: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#D1D5DB',
-    borderRadius: 8,
-    borderWidth: 1,
-    fontSize: 15,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    borderColor: '#9CA3AF',
+    borderRadius: 4,
+    borderWidth: 1.5,
+    color: '#1A1A2E',
+    fontSize: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
   },
   primaryButton: {
     alignItems: 'center',
     backgroundColor: '#1E3A5F',
-    borderRadius: 8,
+    borderRadius: 4,
     marginTop: 8,
     paddingVertical: 14,
   },

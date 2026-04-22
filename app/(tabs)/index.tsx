@@ -112,41 +112,39 @@ export default function IndexScreen() {
       </View>
 
       <Text style={styles.filterLabel}>Category</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
-        <View style={styles.filterRow}>
-          {categoryOptions.map((name) => {
-            const isSelected = selectedCategory === name;
-            const cat = categories.find((c) => c.name === name);
-            return (
-              <Pressable
-                key={name}
-                accessibilityLabel={`Filter by ${name}`}
-                accessibilityRole="button"
-                onPress={() => setSelectedCategory(name)}
+      <View style={styles.filterRow}>
+        {categoryOptions.map((name) => {
+          const isSelected = selectedCategory === name;
+          const cat = categories.find((c) => c.name === name);
+          return (
+            <Pressable
+              key={name}
+              accessibilityLabel={`Filter by ${name}`}
+              accessibilityRole="button"
+              onPress={() => setSelectedCategory(name)}
+              style={[
+                styles.filterButton,
+                isSelected && {
+                  backgroundColor: cat ? cat.colour : '#1E3A5F',
+                  borderColor: cat ? cat.colour : '#1E3A5F',
+                },
+              ]}
+            >
+              {cat && !isSelected ? (
+                <View style={[styles.filterDot, { backgroundColor: cat.colour }]} />
+              ) : null}
+              <Text
                 style={[
-                  styles.filterButton,
-                  isSelected && {
-                    backgroundColor: cat ? cat.colour : '#1E3A5F',
-                    borderColor: cat ? cat.colour : '#1E3A5F',
-                  },
+                  styles.filterButtonText,
+                  isSelected && styles.filterButtonTextSelected,
                 ]}
               >
-                {cat && !isSelected ? (
-                  <View style={[styles.filterDot, { backgroundColor: cat.colour }]} />
-                ) : null}
-                <Text
-                  style={[
-                    styles.filterButtonText,
-                    isSelected && styles.filterButtonTextSelected,
-                  ]}
-                >
-                  {name}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </ScrollView>
+                {name}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
 
       {hasFilters ? (
         <Pressable
@@ -210,7 +208,7 @@ const styles = StyleSheet.create({
   addButton: {
     alignItems: 'center',
     backgroundColor: '#1E3A5F',
-    borderRadius: 8,
+    borderRadius: 4,
     marginBottom: 12,
     paddingVertical: 12,
   },
@@ -221,9 +219,9 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#D1D5DB',
-    borderRadius: 8,
-    borderWidth: 1,
+    borderColor: '#9CA3AF',
+    borderRadius: 4,
+    borderWidth: 1.5,
     color: '#1A1A2E',
     fontSize: 15,
     paddingHorizontal: 12,
@@ -245,9 +243,9 @@ const styles = StyleSheet.create({
   },
   dateInput: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#D1D5DB',
-    borderRadius: 8,
-    borderWidth: 1,
+    borderColor: '#9CA3AF',
+    borderRadius: 4,
+    borderWidth: 1.5,
     color: '#1A1A2E',
     fontSize: 14,
     paddingHorizontal: 10,
@@ -255,23 +253,21 @@ const styles = StyleSheet.create({
   },
   filterLabel: {
     color: '#374151',
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     marginTop: 12,
     marginBottom: 6,
   },
-  filterScroll: {
-    maxHeight: 48,
-  },
   filterRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
   },
   filterButton: {
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderColor: '#9CA3AF',
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1.5,
     flexDirection: 'row',
     gap: 6,
@@ -279,7 +275,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   filterDot: {
-    borderRadius: 5,
+    borderRadius: 999,
     height: 10,
     width: 10,
   },

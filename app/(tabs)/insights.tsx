@@ -30,17 +30,21 @@ export default function InsightsScreen() {
   applications.forEach((app) => {
     const appLogs = statusLogs
       .filter((l) => l.applicationId === app.id)
-      .sort((a, b) => b.date.localeCompare(a.date));
+      .sort((a, b) => {
+        const dateCompare = b.date.localeCompare(a.date);
+        if (dateCompare !== 0) return dateCompare;
+        return b.id - a.id;
+      });
     const latest = appLogs.length > 0 ? appLogs[0].status : 'Unknown';
     latestStatuses[latest] = (latestStatuses[latest] || 0) + 1;
   });
 
   const statusColours: Record<string, string> = {
-    Applied: '#3B82F6',
-    Interviewing: '#F59E0B',
-    Offered: '#10B981',
-    Rejected: '#EF4444',
-    Withdrawn: '#8B5CF6',
+    Applied: '#2563EB',
+    Interviewing: '#D97706',
+    Offered: '#059669',
+    Rejected: '#DC2626',
+    Withdrawn: '#7C3AED',
     Unknown: '#94A3B8',
   };
 
@@ -52,16 +56,26 @@ export default function InsightsScreen() {
     legendFontSize: 13,
   }));
 
-  // Applications per month
+  // Applications per month - use all applications
   const monthCounts: Record<string, number> = {};
   applications.forEach((app) => {
-    const month = app.date.substring(0, 7);
-    monthCounts[month] = (monthCounts[month] || 0) + 1;
+    if (app.date && app.date.length >= 7) {
+      const month = app.date.substring(0, 7);
+      monthCounts[month] = (monthCounts[month] || 0) + 1;
+    }
   });
 
   const sortedMonths = Object.keys(monthCounts).sort();
+
+  const barLabels = sortedMonths.map((m) => {
+    const parts = m.split('-');
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthIndex = parseInt(parts[1], 10) - 1;
+    return monthNames[monthIndex] || parts[1];
+  });
+
   const barData = {
-    labels: sortedMonths.map((m) => m.substring(5)),
+    labels: barLabels,
     datasets: [
       {
         data: sortedMonths.map((m) => monthCounts[m]),
@@ -74,11 +88,12 @@ export default function InsightsScreen() {
     backgroundGradientFrom: '#FFFFFF',
     backgroundGradientTo: '#FFFFFF',
     decimalPlaces: 0,
-    color: (opacity = 1) => `rgba(15, 118, 110, ${opacity})`,
+    color: (opacity = 1) => `rgba(30, 58, 95, ${opacity})`,
     labelColor: () => '#374151',
     style: {
-      borderRadius: 14,
+      borderRadius: 10,
     },
+    barPercentage: 0.6,
   };
 
   // Summary stats
@@ -86,6 +101,8 @@ export default function InsightsScreen() {
   const topCategory = categoryData.length > 0
     ? categoryData.reduce((a, b) => (a.count > b.count ? a : b)).name
     : 'None';
+  const interviewCount = latestStatuses['Interviewing'] || 0;
+  const offerCount = latestStatuses['Offered'] || 0;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -96,21 +113,21 @@ export default function InsightsScreen() {
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
             <Text style={styles.statNumber}>{totalApps}</Text>
-            <Text style={styles.statLabel}>Total Apps</Text>
+            <Text style={styles.statLabel}>Total</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statNumber}>{Object.keys(latestStatuses).length}</Text>
-            <Text style={styles.statLabel}>Statuses</Text>
+            <Text style={[styles.statNumber, { color: '#D97706' }]}>{interviewCount}</Text>
+            <Text style={styles.statLabel}>Interviewing</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statNumber}>{categories.length}</Text>
-            <Text style={styles.statLabel}>Categories</Text>
+            <Text style={[styles.statNumber, { color: '#059669' }]}>{offerCount}</Text>
+            <Text style={styles.statLabel}>Offers</Text>
           </View>
         </View>
 
-        <View style={styles.statCard}>
-          <Text style={styles.statLabel}>Most applied category</Text>
-          <Text style={styles.statHighlight}>{topCategory}</Text>
+        <View style={styles.highlightCard}>
+          <Text style={styles.highlightLabel}>Most applied category</Text>
+          <Text style={styles.highlightValue}>{topCategory}</Text>
         </View>
 
         {categoryData.length > 0 ? (
@@ -146,6 +163,9 @@ export default function InsightsScreen() {
         {sortedMonths.length > 0 ? (
           <View style={styles.chartSection}>
             <Text style={styles.chartTitle}>Applications Per Month</Text>
+            <Text style={styles.chartSubtitle}>
+              {sortedMonths.map((m, i) => `${barLabels[i]}: ${monthCounts[m]}`).join('  ·  ')}
+            </Text>
             <BarChart
               data={barData}
               width={screenWidth}
@@ -154,6 +174,7 @@ export default function InsightsScreen() {
               style={styles.chart}
               yAxisLabel=""
               yAxisSuffix=""
+              fromZero
             />
           </View>
         ) : null}
@@ -164,19 +185,19 @@ export default function InsightsScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F9FAFB',
     flex: 1,
     paddingHorizontal: 18,
     paddingTop: 10,
   },
   title: {
-    color: '#111827',
-    fontSize: 28,
-    fontWeight: '700',
+    color: '#1A1A2E',
+    fontSize: 26,
+    fontWeight: '800',
   },
   subtitle: {
-    color: '#6B7280',
-    fontSize: 14,
+    color: '#64748B',
+    fontSize: 13,
     marginTop: 4,
   },
   statsRow: {
@@ -186,44 +207,63 @@ const styles = StyleSheet.create({
   },
   statCard: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#E5E7EB',
-    borderRadius: 14,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
     borderWidth: 1,
     flex: 1,
     padding: 14,
-    marginBottom: 10,
   },
   statNumber: {
-    color: '#0F766E',
-    fontSize: 24,
-    fontWeight: '700',
+    color: '#1E3A5F',
+    fontSize: 28,
+    fontWeight: '800',
   },
   statLabel: {
-    color: '#6B7280',
+    color: '#64748B',
     fontSize: 12,
+    fontWeight: '500',
     marginTop: 2,
   },
-  statHighlight: {
-    color: '#0F766E',
-    fontSize: 18,
-    fontWeight: '700',
+  highlightCard: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
+    borderWidth: 1,
+    marginTop: 10,
+    padding: 14,
+  },
+  highlightLabel: {
+    color: '#64748B',
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  highlightValue: {
+    color: '#1E3A5F',
+    fontSize: 20,
+    fontWeight: '800',
     marginTop: 4,
   },
   chartSection: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#E5E7EB',
-    borderRadius: 14,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
     borderWidth: 1,
     marginTop: 14,
     padding: 14,
   },
   chartTitle: {
-    color: '#111827',
+    color: '#1A1A2E',
     fontSize: 16,
     fontWeight: '700',
+    marginBottom: 4,
+  },
+  chartSubtitle: {
+    color: '#64748B',
+    fontSize: 12,
+    fontWeight: '500',
     marginBottom: 10,
   },
   chart: {
-    borderRadius: 14,
+    borderRadius: 10,
   },
 });
