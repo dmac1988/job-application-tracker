@@ -11,6 +11,10 @@ export default function TabLayout() {
         name="categories"
         options={{ title: 'Categories' }}
       />
+      <Tabs.Screen
+        name="targets"
+        options={{ title: 'Targets' }}
+      />
     </Tabs>
   );
 }
