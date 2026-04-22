@@ -1,3 +1,4 @@
+import { DarkTheme, LightTheme, ThemeColors } from '@/constants/colours';
 import { db } from '@/db/client';
 import {
   applications as applicationsTable,
@@ -57,6 +58,9 @@ type AppContextType = {
   setStatusLogs: React.Dispatch<React.SetStateAction<StatusLog[]>>;
   targets: Target[];
   setTargets: React.Dispatch<React.SetStateAction<Target[]>>;
+  darkMode: boolean;
+  setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
+  colors: ThemeColors;
 };
 
 export const AppContext = createContext<AppContextType | null>(null);
@@ -65,10 +69,13 @@ export default function RootLayout() {
   const [user, setUser] = useState<User | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState('');
+  const [darkMode, setDarkMode] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [statusLogs, setStatusLogs] = useState<StatusLog[]>([]);
   const [targets, setTargets] = useState<Target[]>([]);
+
+  const colors = darkMode ? DarkTheme : LightTheme;
 
   useEffect(() => {
     const loadData = async () => {
@@ -95,16 +102,16 @@ export default function RootLayout() {
 
   if (!loaded) {
     return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#1E3A5F" />
-        <Text style={styles.loadingText}>Loading your applications...</Text>
+      <View style={[styles.loading, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Loading your applications...</Text>
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.loading}>
+      <View style={[styles.loading, { backgroundColor: colors.background }]}>
         <Text style={styles.errorText}>{error}</Text>
       </View>
     );
@@ -118,9 +125,15 @@ export default function RootLayout() {
         applications, setApplications,
         statusLogs, setStatusLogs,
         targets, setTargets,
+        darkMode, setDarkMode,
+        colors,
       }}
     >
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack screenOptions={{
+        headerShown: false,
+        headerStyle: { backgroundColor: colors.card },
+        headerTintColor: colors.text,
+      }}>
         <Stack.Screen name="login" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="add" options={{ headerShown: true, title: 'Add Application' }} />
@@ -136,13 +149,11 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   loading: {
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
     flex: 1,
     justifyContent: 'center',
     padding: 24,
   },
   loadingText: {
-    color: '#64748B',
     fontSize: 15,
     marginTop: 12,
   },

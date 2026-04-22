@@ -26,7 +26,7 @@ export default function IndexScreen() {
     return <Redirect href="/login" />;
   }
 
-  const { applications, categories } = context;
+  const { applications, categories, colors } = context;
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
   const categoryOptions = [
@@ -60,10 +60,10 @@ export default function IndexScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <View style={styles.header}>
-        <Text style={styles.title}>Applications</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: colors.text }]}>Applications</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
           {applications.length} total{hasFilters ? ` · ${filteredApplications.length} shown` : ''}
         </Text>
       </View>
@@ -72,9 +72,9 @@ export default function IndexScreen() {
         accessibilityLabel="Add application"
         accessibilityRole="button"
         onPress={() => router.push('/add')}
-        style={styles.addButton}
+        style={[styles.addButton, { backgroundColor: colors.primary }]}
       >
-        <Text style={styles.addButtonText}>+ New Application</Text>
+        <Text style={[styles.addButtonText, { color: colors.primaryText }]}>+ New Application</Text>
       </Pressable>
 
       <Pressable
@@ -90,37 +90,37 @@ export default function IndexScreen() {
         value={searchQuery}
         onChangeText={setSearchQuery}
         placeholder="Search by company or role..."
-        placeholderTextColor="#94A3B8"
-        style={styles.searchInput}
+        placeholderTextColor={colors.textSecondary}
+        style={[styles.searchInput, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
         accessibilityLabel="Search applications"
       />
 
       <View style={styles.dateRow}>
         <View style={styles.dateField}>
-          <Text style={styles.dateLabel}>From</Text>
+          <Text style={[styles.dateLabel, { color: colors.text }]}>From</Text>
           <TextInput
             value={dateFrom}
             onChangeText={setDateFrom}
             placeholder="YYYY-MM-DD"
-            placeholderTextColor="#94A3B8"
-            style={styles.dateInput}
+            placeholderTextColor={colors.textSecondary}
+            style={[styles.dateInput, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
             accessibilityLabel="Filter from date"
           />
         </View>
         <View style={styles.dateField}>
-          <Text style={styles.dateLabel}>To</Text>
+          <Text style={[styles.dateLabel, { color: colors.text }]}>To</Text>
           <TextInput
             value={dateTo}
             onChangeText={setDateTo}
             placeholder="YYYY-MM-DD"
-            placeholderTextColor="#94A3B8"
-            style={styles.dateInput}
+            placeholderTextColor={colors.textSecondary}
+            style={[styles.dateInput, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
             accessibilityLabel="Filter to date"
           />
         </View>
       </View>
 
-      <Text style={styles.filterLabel}>Category</Text>
+      <Text style={[styles.filterLabel, { color: colors.text }]}>Category</Text>
       <View style={styles.filterRow}>
         {categoryOptions.map((name) => {
           const isSelected = selectedCategory === name;
@@ -133,9 +133,10 @@ export default function IndexScreen() {
               onPress={() => setSelectedCategory(name)}
               style={[
                 styles.filterButton,
+                { borderColor: colors.inputBorder },
                 isSelected && {
-                  backgroundColor: cat ? cat.colour : '#1E3A5F',
-                  borderColor: cat ? cat.colour : '#1E3A5F',
+                  backgroundColor: cat ? cat.colour : colors.primary,
+                  borderColor: cat ? cat.colour : colors.primary,
                 },
               ]}
             >
@@ -145,6 +146,7 @@ export default function IndexScreen() {
               <Text
                 style={[
                   styles.filterButtonText,
+                  { color: colors.text },
                   isSelected && styles.filterButtonTextSelected,
                 ]}
               >
@@ -172,15 +174,15 @@ export default function IndexScreen() {
       >
         {applications.length === 0 ? (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyTitle}>No applications yet</Text>
-            <Text style={styles.emptyMessage}>
+            <Text style={[styles.emptyTitle, { color: colors.text }]}>No applications yet</Text>
+            <Text style={[styles.emptyMessage, { color: colors.textSecondary }]}>
               Tap "+ New Application" above to start tracking your job search.
             </Text>
           </View>
         ) : filteredApplications.length === 0 ? (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyTitle}>No matches</Text>
-            <Text style={styles.emptyMessage}>
+            <Text style={[styles.emptyTitle, { color: colors.text }]}>No matches</Text>
+            <Text style={[styles.emptyMessage, { color: colors.textSecondary }]}>
               Nothing matches your current filters. Try broadening your search or clearing filters.
             </Text>
           </View>
@@ -196,7 +198,6 @@ export default function IndexScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#F9FAFB',
     flex: 1,
     paddingHorizontal: 18,
     paddingTop: 10,
@@ -205,24 +206,20 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   title: {
-    color: '#1A1A2E',
     fontSize: 26,
     fontWeight: '800',
   },
   subtitle: {
-    color: '#64748B',
     fontSize: 13,
     marginTop: 4,
   },
   addButton: {
     alignItems: 'center',
-    backgroundColor: '#1E3A5F',
     borderRadius: 4,
     marginBottom: 8,
     paddingVertical: 12,
   },
   addButtonText: {
-    color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '600',
   },
@@ -241,11 +238,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   searchInput: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#9CA3AF',
     borderRadius: 4,
     borderWidth: 1.5,
-    color: '#1A1A2E',
     fontSize: 15,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -259,23 +253,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dateLabel: {
-    color: '#374151',
     fontSize: 13,
     fontWeight: '600',
     marginBottom: 4,
   },
   dateInput: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#9CA3AF',
     borderRadius: 4,
     borderWidth: 1.5,
-    color: '#1A1A2E',
     fontSize: 14,
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
   filterLabel: {
-    color: '#374151',
     fontSize: 14,
     fontWeight: '600',
     marginTop: 12,
@@ -288,8 +277,6 @@ const styles = StyleSheet.create({
   },
   filterButton: {
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#9CA3AF',
     borderRadius: 4,
     borderWidth: 1.5,
     flexDirection: 'row',
@@ -303,7 +290,6 @@ const styles = StyleSheet.create({
     width: 10,
   },
   filterButtonText: {
-    color: '#1A1A2E',
     fontSize: 14,
     fontWeight: '600',
   },
@@ -326,12 +312,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   emptyTitle: {
-    color: '#1A1A2E',
     fontSize: 18,
     fontWeight: '700',
   },
   emptyMessage: {
-    color: '#64748B',
     fontSize: 14,
     lineHeight: 20,
     marginTop: 8,

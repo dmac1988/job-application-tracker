@@ -10,6 +10,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   View,
@@ -40,7 +41,7 @@ export default function SettingsScreen() {
 
   if (!context) return null;
 
-  const { user, setUser, categories, setCategories, applications, statusLogs } = context;
+  const { user, setUser, categories, setCategories, applications, statusLogs, darkMode, setDarkMode, colors } = context;
 
   const addCategory = async () => {
     if (!name.trim()) return;
@@ -147,15 +148,29 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Settings</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Settings</Text>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Account</Text>
-          <View style={styles.accountCard}>
-            <Text style={styles.accountLabel}>Logged in as</Text>
-            <Text style={styles.accountUsername}>{user?.username ?? 'Guest'}</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Appearance</Text>
+          <View style={[styles.themeCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.themeLabel, { color: colors.text }]}>Dark Mode</Text>
+            <Switch
+              accessibilityLabel="Toggle dark mode"
+              value={darkMode}
+              onValueChange={setDarkMode}
+              trackColor={{ false: '#D1D5DB', true: '#3B82F6' }}
+              thumbColor={darkMode ? '#FFFFFF' : '#F9FAFB'}
+            />
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Account</Text>
+          <View style={[styles.accountCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.accountLabel, { color: colors.textSecondary }]}>Logged in as</Text>
+            <Text style={[styles.accountUsername, { color: colors.primary }]}>{user?.username ?? 'Guest'}</Text>
           </View>
 
           <Pressable
@@ -163,9 +178,9 @@ export default function SettingsScreen() {
             accessibilityRole="button"
             onPress={exportCSV}
             disabled={exporting}
-            style={styles.exportButton}
+            style={[styles.exportButton, { backgroundColor: colors.primary }]}
           >
-            <Text style={styles.exportButtonText}>
+            <Text style={[styles.exportButtonText, { color: colors.primaryText }]}>
               {exporting ? 'Exporting...' : 'Export Applications (CSV)'}
             </Text>
           </Pressable>
@@ -174,39 +189,39 @@ export default function SettingsScreen() {
             accessibilityLabel="Logout"
             accessibilityRole="button"
             onPress={handleLogout}
-            style={styles.secondaryButton}
+            style={[styles.secondaryButton, { backgroundColor: colors.card, borderColor: colors.inputBorder }]}
           >
-            <Text style={styles.secondaryButtonText}>Logout</Text>
+            <Text style={[styles.secondaryButtonText, { color: colors.text }]}>Logout</Text>
           </Pressable>
 
           <Pressable
             accessibilityLabel="Delete profile"
             accessibilityRole="button"
             onPress={handleDeleteProfile}
-            style={styles.dangerButton}
+            style={[styles.dangerButton, { backgroundColor: colors.dangerBg, borderColor: colors.dangerBorder }]}
           >
-            <Text style={styles.dangerButtonText}>Delete Profile</Text>
+            <Text style={[styles.dangerButtonText, { color: colors.danger }]}>Delete Profile</Text>
           </Pressable>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Categories</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Categories</Text>
 
-          <View style={styles.form}>
+          <View style={[styles.form, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.field}>
-              <Text style={styles.label}>New Category</Text>
+              <Text style={[styles.label, { color: colors.text }]}>New Category</Text>
               <TextInput
                 accessibilityLabel="Category name"
                 placeholder="e.g. Data Science, UX Design"
-                placeholderTextColor="#94A3B8"
+                placeholderTextColor={colors.textSecondary}
                 value={name}
                 onChangeText={setName}
-                style={styles.input}
+                style={[styles.input, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
               />
             </View>
 
             <View style={styles.field}>
-              <Text style={styles.label}>Colour</Text>
+              <Text style={[styles.label, { color: colors.text }]}>Colour</Text>
               <View style={styles.colourRow}>
                 {COLOUR_OPTIONS.map((colour) => (
                   <Pressable
@@ -228,23 +243,23 @@ export default function SettingsScreen() {
               accessibilityLabel="Add category"
               accessibilityRole="button"
               onPress={addCategory}
-              style={styles.addButton}
+              style={[styles.addButton, { backgroundColor: colors.primary }]}
             >
-              <Text style={styles.addButtonText}>Add Category</Text>
+              <Text style={[styles.addButtonText, { color: colors.primaryText }]}>Add Category</Text>
             </Pressable>
           </View>
 
           {categories.map((cat) => (
-            <View key={cat.id} style={styles.card}>
+            <View key={cat.id} style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
               {editingId === cat.id ? (
                 <View style={styles.editForm}>
                   <TextInput
                     accessibilityLabel="Edit category name"
                     placeholder="Category name"
-                    placeholderTextColor="#94A3B8"
+                    placeholderTextColor={colors.textSecondary}
                     value={editName}
                     onChangeText={setEditName}
-                    style={styles.input}
+                    style={[styles.input, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
                   />
                   <View style={styles.colourRow}>
                     {COLOUR_OPTIONS.map((colour) => (
@@ -266,17 +281,17 @@ export default function SettingsScreen() {
                       accessibilityLabel="Save edit"
                       accessibilityRole="button"
                       onPress={saveEdit}
-                      style={styles.saveButton}
+                      style={[styles.saveButton, { backgroundColor: colors.primary }]}
                     >
-                      <Text style={styles.saveButtonText}>Save</Text>
+                      <Text style={[styles.saveButtonText, { color: colors.primaryText }]}>Save</Text>
                     </Pressable>
                     <Pressable
                       accessibilityLabel="Cancel edit"
                       accessibilityRole="button"
                       onPress={cancelEdit}
-                      style={styles.cancelButton}
+                      style={[styles.cancelButton, { borderColor: colors.inputBorder }]}
                     >
-                      <Text style={styles.cancelButtonText}>Cancel</Text>
+                      <Text style={[styles.cancelButtonText, { color: colors.text }]}>Cancel</Text>
                     </Pressable>
                   </View>
                 </View>
@@ -284,7 +299,7 @@ export default function SettingsScreen() {
                 <>
                   <View style={styles.cardLeft}>
                     <View style={[styles.colourIndicator, { backgroundColor: cat.colour }]} />
-                    <Text style={styles.cardName}>{cat.name}</Text>
+                    <Text style={[styles.cardName, { color: colors.text }]}>{cat.name}</Text>
                   </View>
                   <View style={styles.cardActions}>
                     <Pressable
@@ -299,9 +314,9 @@ export default function SettingsScreen() {
                       accessibilityLabel={`Delete ${cat.name}`}
                       accessibilityRole="button"
                       onPress={() => deleteCategory(cat.id)}
-                      style={styles.deleteSmall}
+                      style={[styles.deleteSmall, { backgroundColor: colors.dangerBg, borderColor: colors.dangerBorder }]}
                     >
-                      <Text style={styles.deleteSmallText}>Delete</Text>
+                      <Text style={[styles.deleteSmallText, { color: colors.danger }]}>Delete</Text>
                     </Pressable>
                   </View>
                 </>
@@ -314,9 +329,9 @@ export default function SettingsScreen() {
           accessibilityLabel="Go back"
           accessibilityRole="button"
           onPress={() => router.back()}
-          style={styles.backButton}
+          style={[styles.backButton, { borderColor: colors.inputBorder }]}
         >
-          <Text style={styles.backButtonText}>Back</Text>
+          <Text style={[styles.backButtonText, { color: colors.text }]}>Back</Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>
@@ -325,12 +340,10 @@ export default function SettingsScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#F9FAFB',
     flex: 1,
     padding: 20,
   },
   title: {
-    color: '#1A1A2E',
     fontSize: 26,
     fontWeight: '800',
     marginBottom: 20,
@@ -339,45 +352,49 @@ const styles = StyleSheet.create({
     marginBottom: 28,
   },
   sectionTitle: {
-    color: '#1A1A2E',
     fontSize: 20,
     fontWeight: '700',
     marginBottom: 12,
   },
+  themeCard: {
+    alignItems: 'center',
+    borderRadius: 4,
+    borderWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+    padding: 16,
+  },
+  themeLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
   accountCard: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#E2E8F0',
     borderRadius: 4,
     borderWidth: 1,
     marginBottom: 12,
     padding: 16,
   },
   accountLabel: {
-    color: '#64748B',
     fontSize: 13,
     fontWeight: '500',
   },
   accountUsername: {
-    color: '#1E3A5F',
     fontSize: 20,
     fontWeight: '800',
     marginTop: 4,
   },
   exportButton: {
     alignItems: 'center',
-    backgroundColor: '#1E3A5F',
     borderRadius: 4,
     marginBottom: 10,
     paddingVertical: 14,
   },
   exportButtonText: {
-    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
   },
   form: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#E2E8F0',
     borderRadius: 4,
     borderWidth: 1,
     marginBottom: 12,
@@ -387,17 +404,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
-    color: '#374151',
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 6,
   },
   input: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#9CA3AF',
     borderRadius: 4,
     borderWidth: 1.5,
-    color: '#1A1A2E',
     fontSize: 16,
     paddingHorizontal: 14,
     paddingVertical: 14,
@@ -423,18 +436,14 @@ const styles = StyleSheet.create({
   },
   addButton: {
     alignItems: 'center',
-    backgroundColor: '#1E3A5F',
     borderRadius: 4,
     paddingVertical: 14,
   },
   addButtonText: {
-    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
   },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#E2E8F0',
     borderRadius: 4,
     borderWidth: 1,
     marginBottom: 10,
@@ -451,7 +460,6 @@ const styles = StyleSheet.create({
     width: 16,
   },
   cardName: {
-    color: '#1A1A2E',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -474,15 +482,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   deleteSmall: {
-    backgroundColor: '#FEF2F2',
-    borderColor: '#FCA5A5',
     borderRadius: 4,
     borderWidth: 1.5,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
   deleteSmallText: {
-    color: '#991B1B',
     fontSize: 14,
     fontWeight: '600',
   },
@@ -494,67 +499,53 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   saveButton: {
-    backgroundColor: '#1E3A5F',
     borderRadius: 4,
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
   saveButtonText: {
-    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
   },
   cancelButton: {
-    backgroundColor: '#F9FAFB',
-    borderColor: '#9CA3AF',
     borderRadius: 4,
     borderWidth: 1.5,
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
   cancelButtonText: {
-    color: '#374151',
     fontSize: 14,
     fontWeight: '600',
   },
   secondaryButton: {
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    borderColor: '#9CA3AF',
     borderRadius: 4,
     borderWidth: 1.5,
     marginBottom: 10,
     paddingVertical: 14,
   },
   secondaryButtonText: {
-    color: '#374151',
     fontSize: 16,
     fontWeight: '600',
   },
   dangerButton: {
     alignItems: 'center',
-    backgroundColor: '#FEF2F2',
-    borderColor: '#FCA5A5',
     borderRadius: 4,
     borderWidth: 1.5,
     marginBottom: 10,
     paddingVertical: 14,
   },
   dangerButtonText: {
-    color: '#991B1B',
     fontSize: 16,
     fontWeight: '600',
   },
   backButton: {
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    borderColor: '#9CA3AF',
     borderRadius: 4,
     borderWidth: 1.5,
     paddingVertical: 14,
   },
   backButtonText: {
-    color: '#374151',
     fontSize: 16,
     fontWeight: '600',
   },

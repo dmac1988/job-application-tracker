@@ -13,7 +13,7 @@ export default function ApplicationCard({ application }: Props) {
 
   if (!context) return null;
 
-  const { categories, statusLogs } = context;
+  const { categories, statusLogs, colors } = context;
   const category = categories.find((c) => c.id === application.categoryId);
 
   const appLogs = statusLogs
@@ -42,22 +42,23 @@ export default function ApplicationCard({ application }: Props) {
       }
       style={({ pressed }) => [
         styles.card,
+        { backgroundColor: colors.card, borderColor: colors.border },
         pressed ? styles.cardPressed : null,
       ]}
     >
       <View style={styles.topRow}>
-        <Text style={styles.company}>{application.company}</Text>
+        <Text style={[styles.company, { color: colors.text }]}>{application.company}</Text>
         <Text
           style={[
             styles.status,
-            { color: statusColour[latestStatus] || '#64748B' },
+            { color: statusColour[latestStatus] || colors.textSecondary },
           ]}
         >
           {latestStatus}
         </Text>
       </View>
 
-      <Text style={styles.role}>{application.role}</Text>
+      <Text style={[styles.role, { color: colors.textSecondary }]}>{application.role}</Text>
 
       <View style={styles.bottomRow}>
         {category ? (
@@ -68,7 +69,7 @@ export default function ApplicationCard({ application }: Props) {
             </Text>
           </View>
         ) : null}
-        <Text style={styles.date}>{application.date}</Text>
+        <Text style={[styles.date, { color: colors.textSecondary }]}>{application.date}</Text>
       </View>
     </Pressable>
   );
@@ -76,8 +77,6 @@ export default function ApplicationCard({ application }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#E2E8F0',
     borderLeftColor: '#1E3A5F',
     borderLeftWidth: 3,
     borderRadius: 4,
@@ -94,7 +93,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   company: {
-    color: '#1A1A2E',
     fontSize: 17,
     fontWeight: '700',
   },
@@ -104,7 +102,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   role: {
-    color: '#64748B',
     fontSize: 14,
     marginTop: 3,
   },
@@ -132,7 +129,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   date: {
-    color: '#94A3B8',
     fontSize: 12,
   },
 });

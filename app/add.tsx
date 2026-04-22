@@ -16,18 +16,13 @@ export default function AddApplication() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
   if (!context) return null;
-  const { categories, setApplications, setStatusLogs } = context;
+  const { categories, setApplications, setStatusLogs, colors } = context;
 
   const saveApplication = async () => {
     if (!company || !role || !date || !selectedCategoryId) return;
 
     await db.insert(applicationsTable).values({
-      company,
-      role,
-      date,
-      categoryId: selectedCategoryId,
-      count: 1,
-      notes,
+      company, role, date, categoryId: selectedCategoryId, count: 1, notes,
     });
 
     const apps = await db.select().from(applicationsTable);
@@ -35,9 +30,7 @@ export default function AddApplication() {
 
     if (newApp) {
       await db.insert(statusLogsTable).values({
-        applicationId: newApp.id,
-        status: 'Applied',
-        date,
+        applicationId: newApp.id, status: 'Applied', date,
       });
     }
 
@@ -48,49 +41,49 @@ export default function AddApplication() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Add Application</Text>
-        <Text style={styles.subtitle}>Record a new job application.</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Add Application</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Record a new job application.</Text>
 
         <View style={styles.field}>
-          <Text style={styles.label}>Company</Text>
+          <Text style={[styles.label, { color: colors.text }]}>Company</Text>
           <TextInput
             accessibilityLabel="Company"
             placeholder="e.g. Google, Stripe, Meta"
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={colors.textSecondary}
             value={company}
             onChangeText={setCompany}
-            style={styles.input}
+            style={[styles.input, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
           />
         </View>
 
         <View style={styles.field}>
-          <Text style={styles.label}>Role</Text>
+          <Text style={[styles.label, { color: colors.text }]}>Role</Text>
           <TextInput
             accessibilityLabel="Role"
             placeholder="e.g. Software Engineer"
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={colors.textSecondary}
             value={role}
             onChangeText={setRole}
-            style={styles.input}
+            style={[styles.input, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
           />
         </View>
 
         <View style={styles.field}>
-          <Text style={styles.label}>Date Applied</Text>
+          <Text style={[styles.label, { color: colors.text }]}>Date Applied</Text>
           <TextInput
             accessibilityLabel="Date"
             placeholder="YYYY-MM-DD"
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={colors.textSecondary}
             value={date}
             onChangeText={setDate}
-            style={styles.input}
+            style={[styles.input, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
           />
         </View>
 
         <View style={styles.field}>
-          <Text style={styles.label}>Category</Text>
+          <Text style={[styles.label, { color: colors.text }]}>Category</Text>
           <View style={styles.optionRow}>
             {categories.map((cat) => {
               const isSelected = selectedCategoryId === cat.id;
@@ -102,18 +95,14 @@ export default function AddApplication() {
                   onPress={() => setSelectedCategoryId(cat.id)}
                   style={[
                     styles.optionButton,
+                    { borderColor: colors.inputBorder },
                     isSelected && { backgroundColor: cat.colour, borderColor: cat.colour },
                   ]}
                 >
                   {!isSelected ? (
                     <View style={[styles.optionDot, { backgroundColor: cat.colour }]} />
                   ) : null}
-                  <Text
-                    style={[
-                      styles.optionButtonText,
-                      isSelected && { color: '#FFFFFF' },
-                    ]}
-                  >
+                  <Text style={[styles.optionButtonText, { color: colors.text }, isSelected && { color: '#FFFFFF' }]}>
                     {cat.name}
                   </Text>
                 </Pressable>
@@ -123,15 +112,15 @@ export default function AddApplication() {
         </View>
 
         <View style={styles.field}>
-          <Text style={styles.label}>Notes (optional)</Text>
+          <Text style={[styles.label, { color: colors.text }]}>Notes (optional)</Text>
           <TextInput
             accessibilityLabel="Notes"
             placeholder="Any extra details about this application..."
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={colors.textSecondary}
             value={notes}
             onChangeText={setNotes}
             multiline
-            style={[styles.input, styles.textArea]}
+            style={[styles.input, styles.textArea, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
           />
         </View>
 
@@ -139,18 +128,18 @@ export default function AddApplication() {
           accessibilityLabel="Save application"
           accessibilityRole="button"
           onPress={saveApplication}
-          style={styles.primaryButton}
+          style={[styles.primaryButton, { backgroundColor: colors.primary }]}
         >
-          <Text style={styles.primaryButtonText}>Save Application</Text>
+          <Text style={[styles.primaryButtonText, { color: colors.primaryText }]}>Save Application</Text>
         </Pressable>
 
         <Pressable
           accessibilityLabel="Cancel"
           accessibilityRole="button"
           onPress={() => router.back()}
-          style={styles.secondaryButton}
+          style={[styles.secondaryButton, { borderColor: colors.inputBorder }]}
         >
-          <Text style={styles.secondaryButtonText}>Cancel</Text>
+          <Text style={[styles.secondaryButtonText, { color: colors.text }]}>Cancel</Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>
@@ -159,7 +148,6 @@ export default function AddApplication() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#F9FAFB',
     flex: 1,
     padding: 20,
   },
@@ -167,12 +155,10 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   title: {
-    color: '#1A1A2E',
     fontSize: 26,
     fontWeight: '800',
   },
   subtitle: {
-    color: '#64748B',
     fontSize: 14,
     marginTop: 4,
     marginBottom: 20,
@@ -181,17 +167,13 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   label: {
-    color: '#374151',
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 6,
   },
   input: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#9CA3AF',
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1.5,
-    color: '#1A1A2E',
     fontSize: 16,
     paddingHorizontal: 14,
     paddingVertical: 14,
@@ -207,9 +189,7 @@ const styles = StyleSheet.create({
   },
   optionButton: {
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#9CA3AF',
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1.5,
     flexDirection: 'row',
     gap: 6,
@@ -217,38 +197,32 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   optionDot: {
-    borderRadius: 5,
+    borderRadius: 999,
     height: 10,
     width: 10,
   },
   optionButtonText: {
-    color: '#1A1A2E',
     fontSize: 14,
     fontWeight: '600',
   },
   primaryButton: {
     alignItems: 'center',
-    backgroundColor: '#1E3A5F',
-    borderRadius: 8,
+    borderRadius: 4,
     marginTop: 8,
     paddingVertical: 14,
   },
   primaryButtonText: {
-    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
   },
   secondaryButton: {
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    borderColor: '#9CA3AF',
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1.5,
     marginTop: 10,
     paddingVertical: 14,
   },
   secondaryButtonText: {
-    color: '#374151',
     fontSize: 16,
     fontWeight: '600',
   },

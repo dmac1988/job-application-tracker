@@ -17,7 +17,7 @@ export default function LoginScreen() {
 
   if (!context) return null;
 
-  const { setUser } = context;
+  const { setUser, colors } = context;
 
   const handleLogin = async () => {
     if (!username.trim() || !password.trim()) {
@@ -75,42 +75,42 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <View style={styles.container}>
-        <View style={styles.brandBlock}>
+        <View style={[styles.brandBlock, { backgroundColor: colors.primary }]}>
           <Text style={styles.brandName}>ByeUnemployment 👋</Text>
-          <Text style={styles.brandTagline}>Make your parents proud. Get a job</Text>
+          <Text style={styles.brandTagline}>Your job search, sorted.</Text>
         </View>
 
-        <Text style={styles.formTitle}>
+        <Text style={[styles.formTitle, { color: colors.text }]}>
           {isRegistering ? 'Create your account' : 'Welcome back'}
         </Text>
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {error ? <Text style={[styles.error, { backgroundColor: colors.dangerBg, borderColor: colors.dangerBorder, color: colors.danger }]}>{error}</Text> : null}
 
         <View style={styles.field}>
-          <Text style={styles.label}>Username</Text>
+          <Text style={[styles.label, { color: colors.text }]}>Username</Text>
           <TextInput
             accessibilityLabel="Username"
             placeholder="Enter your username"
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={colors.textSecondary}
             value={username}
             onChangeText={(text) => { setUsername(text); setError(''); }}
             autoCapitalize="none"
-            style={styles.input}
+            style={[styles.input, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
           />
         </View>
 
         <View style={styles.field}>
-          <Text style={styles.label}>Password</Text>
+          <Text style={[styles.label, { color: colors.text }]}>Password</Text>
           <TextInput
             accessibilityLabel="Password"
             placeholder="Enter your password"
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={colors.textSecondary}
             value={password}
             onChangeText={(text) => { setPassword(text); setError(''); }}
             secureTextEntry
-            style={styles.input}
+            style={[styles.input, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
           />
         </View>
 
@@ -118,9 +118,9 @@ export default function LoginScreen() {
           accessibilityLabel={isRegistering ? 'Register' : 'Login'}
           accessibilityRole="button"
           onPress={isRegistering ? handleRegister : handleLogin}
-          style={styles.primaryButton}
+          style={[styles.primaryButton, { backgroundColor: colors.primary }]}
         >
-          <Text style={styles.primaryButtonText}>
+          <Text style={[styles.primaryButtonText, { color: colors.primaryText }]}>
             {isRegistering ? 'Create Account' : 'Sign In'}
           </Text>
         </Pressable>
@@ -131,7 +131,7 @@ export default function LoginScreen() {
           onPress={() => { setIsRegistering(!isRegistering); setError(''); }}
           style={styles.switchButton}
         >
-          <Text style={styles.switchButtonText}>
+          <Text style={[styles.switchButtonText, { color: colors.primary }]}>
             {isRegistering
               ? 'Already have an account? Sign in'
               : "New here? Create an account"}
@@ -144,7 +144,6 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#F9FAFB',
     flex: 1,
   },
   container: {
@@ -153,7 +152,6 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   brandBlock: {
-    backgroundColor: '#1E3A5F',
     borderRadius: 4,
     marginBottom: 28,
     padding: 24,
@@ -169,17 +167,13 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   formTitle: {
-    color: '#1A1A2E',
     fontSize: 20,
     fontWeight: '700',
     marginBottom: 18,
   },
   error: {
-    backgroundColor: '#FEF2F2',
-    borderColor: '#FCA5A5',
     borderRadius: 4,
     borderWidth: 1,
-    color: '#991B1B',
     fontSize: 14,
     fontWeight: '500',
     marginBottom: 16,
@@ -189,30 +183,24 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   label: {
-    color: '#374151',
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 6,
   },
   input: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#9CA3AF',
     borderRadius: 4,
     borderWidth: 1.5,
-    color: '#1A1A2E',
     fontSize: 16,
     paddingHorizontal: 14,
     paddingVertical: 14,
   },
   primaryButton: {
     alignItems: 'center',
-    backgroundColor: '#1E3A5F',
     borderRadius: 4,
     marginTop: 8,
     paddingVertical: 14,
   },
   primaryButtonText: {
-    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -222,7 +210,6 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   switchButtonText: {
-    color: '#1E3A5F',
     fontSize: 14,
     fontWeight: '500',
   },
