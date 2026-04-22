@@ -4,6 +4,10 @@ import { openDatabaseSync } from 'expo-sqlite';
 const sqlite = openDatabaseSync('jobtracker.db');
 
 sqlite.execSync(
+  'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, password TEXT NOT NULL);'
+);
+
+sqlite.execSync(
   'CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, colour TEXT NOT NULL DEFAULT \'#3B82F6\');'
 );
 

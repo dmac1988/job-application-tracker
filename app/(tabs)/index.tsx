@@ -1,5 +1,5 @@
 import ApplicationCard from '@/components/ApplicationCard';
-import { useRouter } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import { useContext, useState } from 'react';
 import {
   Pressable,
@@ -19,6 +19,10 @@ export default function IndexScreen() {
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   if (!context) return null;
+
+  if (!context.user) {
+    return <Redirect href="/login" />;
+  }
 
   const { applications, categories } = context;
   const normalizedQuery = searchQuery.trim().toLowerCase();

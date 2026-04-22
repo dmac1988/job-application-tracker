@@ -9,6 +9,12 @@ import { seedIfEmpty } from '@/db/seed';
 import { Stack } from 'expo-router';
 import { createContext, useEffect, useState } from 'react';
 
+export type User = {
+  id: number;
+  username: string;
+  password: string;
+};
+
 export type Category = {
   id: number;
   name: string;
@@ -40,6 +46,8 @@ export type Target = {
 };
 
 type AppContextType = {
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   categories: Category[];
   setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
   applications: Application[];
@@ -53,6 +61,8 @@ type AppContextType = {
 export const AppContext = createContext<AppContextType | null>(null);
 
 export default function RootLayout() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loaded, setLoaded] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [statusLogs, setStatusLogs] = useState<StatusLog[]>([]);
@@ -74,21 +84,32 @@ export default function RootLayout() {
       } catch (error) {
         console.error('Error loading data:', error);
       }
+      setLoaded(true);
     };
 
     void loadData();
   }, []);
 
+  if (!loaded) return null;
+
   return (
     <AppContext.Provider
       value={{
+        user, setUser,
         categories, setCategories,
         applications, setApplications,
         statusLogs, setStatusLogs,
         targets, setTargets,
       }}
     >
-      <Stack />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="login" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="add" options={{ headerShown: true, title: 'Add Application' }} />
+        <Stack.Screen name="settings" options={{ headerShown: true, title: 'Settings' }} />
+        <Stack.Screen name="application/[id]" options={{ headerShown: true, title: 'Details' }} />
+        <Stack.Screen name="application/[id]/edit" options={{ headerShown: true, title: 'Edit' }} />
+      </Stack>
     </AppContext.Provider>
   );
 }

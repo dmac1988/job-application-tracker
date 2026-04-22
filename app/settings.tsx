@@ -1,5 +1,5 @@
 import { db } from '@/db/client';
-import { categories as categoriesTable } from '@/db/schema';
+import { categories as categoriesTable, users as usersTable } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { useRouter } from 'expo-router';
 import { useContext, useState } from 'react';
@@ -33,7 +33,7 @@ export default function SettingsScreen() {
 
   if (!context) return null;
 
-  const { categories, setCategories } = context;
+  const { user, setUser, categories, setCategories } = context;
 
   const addCategory = async () => {
     if (!name.trim()) return;
@@ -55,10 +55,48 @@ export default function SettingsScreen() {
     setCategories(cats);
   };
 
+  const handleLogout = () => {
+    setUser(null);
+    router.replace('/login');
+  };
+
+  const handleDeleteProfile = async () => {
+    if (!user) return;
+    await db.delete(usersTable).where(eq(usersTable.id, user.id));
+    setUser(null);
+    router.replace('/login');
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Settings</Text>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Account</Text>
+          <View style={styles.accountCard}>
+            <Text style={styles.accountLabel}>Logged in as</Text>
+            <Text style={styles.accountUsername}>{user?.username ?? 'Guest'}</Text>
+          </View>
+
+          <Pressable
+            accessibilityLabel="Logout"
+            accessibilityRole="button"
+            onPress={handleLogout}
+            style={styles.secondaryButton}
+          >
+            <Text style={styles.secondaryButtonText}>Logout</Text>
+          </Pressable>
+
+          <Pressable
+            accessibilityLabel="Delete profile"
+            accessibilityRole="button"
+            onPress={handleDeleteProfile}
+            style={styles.dangerButton}
+          >
+            <Text style={styles.dangerButtonText}>Delete Profile</Text>
+          </Pressable>
+        </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Categories</Text>
@@ -110,17 +148,12 @@ export default function SettingsScreen() {
                 accessibilityLabel={`Delete ${cat.name}`}
                 accessibilityRole="button"
                 onPress={() => deleteCategory(cat.id)}
-                style={styles.deleteButton}
+                style={styles.deleteSmall}
               >
-                <Text style={styles.deleteButtonText}>Delete</Text>
+                <Text style={styles.deleteSmallText}>Delete</Text>
               </Pressable>
             </View>
           ))}
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Account</Text>
-          <Text style={styles.placeholderText}>Login and account management coming soon.</Text>
         </View>
 
         <Pressable
@@ -156,6 +189,24 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     marginBottom: 12,
+  },
+  accountCard: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#E5E7EB',
+    borderRadius: 14,
+    borderWidth: 1,
+    marginBottom: 12,
+    padding: 14,
+  },
+  accountLabel: {
+    color: '#6B7280',
+    fontSize: 13,
+  },
+  accountUsername: {
+    color: '#0F766E',
+    fontSize: 18,
+    fontWeight: '700',
+    marginTop: 4,
   },
   form: {
     backgroundColor: '#FFFFFF',
@@ -232,7 +283,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  deleteButton: {
+  deleteSmall: {
     backgroundColor: '#FEF2F2',
     borderColor: '#FCA5A5',
     borderRadius: 8,
@@ -240,14 +291,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
   },
-  deleteButtonText: {
+  deleteSmallText: {
     color: '#7F1D1D',
     fontSize: 13,
     fontWeight: '600',
   },
-  placeholderText: {
-    color: '#6B7280',
-    fontSize: 14,
+  secondaryButton: {
+    alignItems: 'center',
+    backgroundColor: '#F8FAFC',
+    borderColor: '#94A3B8',
+    borderRadius: 10,
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingVertical: 12,
+  },
+  secondaryButtonText: {
+    color: '#0F172A',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  dangerButton: {
+    alignItems: 'center',
+    backgroundColor: '#FEF2F2',
+    borderColor: '#FCA5A5',
+    borderRadius: 10,
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingVertical: 12,
+  },
+  dangerButtonText: {
+    color: '#7F1D1D',
+    fontSize: 15,
+    fontWeight: '600',
   },
   backButton: {
     alignItems: 'center',
