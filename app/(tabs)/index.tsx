@@ -19,6 +19,7 @@ export default function IndexScreen() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
   if (!context) return null;
 
@@ -61,122 +62,136 @@ export default function IndexScreen() {
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>Applications</Text>
-        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-          {applications.length} total{hasFilters ? ` · ${filteredApplications.length} shown` : ''}
-        </Text>
-      </View>
-
-      <Pressable
-        accessibilityLabel="Add application"
-        accessibilityRole="button"
-        onPress={() => router.push('/add')}
-        style={[styles.addButton, { backgroundColor: colors.primary }]}
-      >
-        <Text style={[styles.addButtonText, { color: colors.primaryText }]}>+ New Application</Text>
-      </Pressable>
-
-      <Pressable
-        accessibilityLabel="Browse remote jobs"
-        accessibilityRole="button"
-        onPress={() => router.push('/browse')}
-        style={styles.browseButton}
-      >
-        <Text style={styles.browseButtonText}>Browse Remote Jobs</Text>
-      </Pressable>
-
-      <TextInput
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search by company or role..."
-        placeholderTextColor={colors.textSecondary}
-        style={[styles.searchInput, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
-        accessibilityLabel="Search applications"
-      />
-
-      <View style={styles.dateRow}>
-        <View style={styles.dateField}>
-          <Text style={[styles.dateLabel, { color: colors.text }]}>From</Text>
-          <TextInput
-            value={dateFrom}
-            onChangeText={setDateFrom}
-            placeholder="YYYY-MM-DD"
-            placeholderTextColor={colors.textSecondary}
-            style={[styles.dateInput, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
-            accessibilityLabel="Filter from date"
-          />
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <Text style={[styles.title, { color: colors.text }]}>Applications</Text>
+          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+            {applications.length} total{hasFilters ? ` · ${filteredApplications.length} shown` : ''}
+          </Text>
         </View>
-        <View style={styles.dateField}>
-          <Text style={[styles.dateLabel, { color: colors.text }]}>To</Text>
-          <TextInput
-            value={dateTo}
-            onChangeText={setDateTo}
-            placeholder="YYYY-MM-DD"
-            placeholderTextColor={colors.textSecondary}
-            style={[styles.dateInput, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
-            accessibilityLabel="Filter to date"
-          />
-        </View>
-      </View>
 
-      <Text style={[styles.filterLabel, { color: colors.text }]}>Category</Text>
-      <View style={styles.filterRow}>
-        {categoryOptions.map((name) => {
-          const isSelected = selectedCategory === name;
-          const cat = categories.find((c) => c.name === name);
-          return (
-            <Pressable
-              key={name}
-              accessibilityLabel={`Filter by ${name}`}
-              accessibilityRole="button"
-              onPress={() => setSelectedCategory(name)}
-              style={[
-                styles.filterButton,
-                { borderColor: colors.inputBorder },
-                isSelected && {
-                  backgroundColor: cat ? cat.colour : colors.primary,
-                  borderColor: cat ? cat.colour : colors.primary,
-                },
-              ]}
-            >
-              {cat && !isSelected ? (
-                <View style={[styles.filterDot, { backgroundColor: cat.colour }]} />
-              ) : null}
-              <Text
-                style={[
-                  styles.filterButtonText,
-                  { color: colors.text },
-                  isSelected && styles.filterButtonTextSelected,
-                ]}
+        <View style={styles.buttonRow}>
+          <Pressable
+            accessibilityLabel="Add application"
+            accessibilityRole="button"
+            onPress={() => router.push('/add')}
+            style={[styles.addButton, { backgroundColor: colors.primary }]}
+          >
+            <Text style={[styles.addButtonText, { color: colors.primaryText }]}>+ New</Text>
+          </Pressable>
+
+          <Pressable
+            accessibilityLabel="Browse remote jobs"
+            accessibilityRole="button"
+            onPress={() => router.push('/browse')}
+            style={styles.browseButton}
+          >
+            <Text style={styles.browseButtonText}>Browse Jobs</Text>
+          </Pressable>
+
+          <Pressable
+            accessibilityLabel="Toggle filters"
+            accessibilityRole="button"
+            onPress={() => setShowFilters(!showFilters)}
+            style={[styles.filterToggle, { borderColor: hasFilters ? '#DC2626' : colors.inputBorder }]}
+          >
+            <Text style={[styles.filterToggleText, { color: hasFilters ? '#DC2626' : colors.text }]}>
+              {showFilters ? 'Hide' : 'Filters'}{hasFilters ? ' ●' : ''}
+            </Text>
+          </Pressable>
+        </View>
+
+        {showFilters ? (
+          <View style={[styles.filtersPanel, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <TextInput
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Search by company or role..."
+              placeholderTextColor={colors.textSecondary}
+              style={[styles.searchInput, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
+              accessibilityLabel="Search applications"
+            />
+
+            <View style={styles.dateRow}>
+              <View style={styles.dateField}>
+                <Text style={[styles.dateLabel, { color: colors.text }]}>From</Text>
+                <TextInput
+                  value={dateFrom}
+                  onChangeText={setDateFrom}
+                  placeholder="YYYY-MM-DD"
+                  placeholderTextColor={colors.textSecondary}
+                  style={[styles.dateInput, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
+                  accessibilityLabel="Filter from date"
+                />
+              </View>
+              <View style={styles.dateField}>
+                <Text style={[styles.dateLabel, { color: colors.text }]}>To</Text>
+                <TextInput
+                  value={dateTo}
+                  onChangeText={setDateTo}
+                  placeholder="YYYY-MM-DD"
+                  placeholderTextColor={colors.textSecondary}
+                  style={[styles.dateInput, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder, color: colors.text }]}
+                  accessibilityLabel="Filter to date"
+                />
+              </View>
+            </View>
+
+            <Text style={[styles.filterLabel, { color: colors.text }]}>Category</Text>
+            <View style={styles.filterRow}>
+              {categoryOptions.map((name) => {
+                const isSelected = selectedCategory === name;
+                const cat = categories.find((c) => c.name === name);
+                return (
+                  <Pressable
+                    key={name}
+                    accessibilityLabel={`Filter by ${name}`}
+                    accessibilityRole="button"
+                    onPress={() => setSelectedCategory(name)}
+                    style={[
+                      styles.filterButton,
+                      { borderColor: colors.inputBorder },
+                      isSelected && {
+                        backgroundColor: cat ? cat.colour : colors.primary,
+                        borderColor: cat ? cat.colour : colors.primary,
+                      },
+                    ]}
+                  >
+                    {cat && !isSelected ? (
+                      <View style={[styles.filterDot, { backgroundColor: cat.colour }]} />
+                    ) : null}
+                    <Text
+                      style={[
+                        styles.filterButtonText,
+                        { color: colors.text },
+                        isSelected && styles.filterButtonTextSelected,
+                      ]}
+                    >
+                      {name}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+
+            {hasFilters ? (
+              <Pressable
+                accessibilityLabel="Clear all filters"
+                accessibilityRole="button"
+                onPress={clearFilters}
+                style={styles.clearButton}
               >
-                {name}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
+                <Text style={styles.clearButtonText}>Clear all filters</Text>
+              </Pressable>
+            ) : null}
+          </View>
+        ) : null}
 
-      {hasFilters ? (
-        <Pressable
-          accessibilityLabel="Clear all filters"
-          accessibilityRole="button"
-          onPress={clearFilters}
-          style={styles.clearButton}
-        >
-          <Text style={styles.clearButtonText}>Clear all filters</Text>
-        </Pressable>
-      ) : null}
-
-      <ScrollView
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-      >
         {applications.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={[styles.emptyTitle, { color: colors.text }]}>No applications yet</Text>
             <Text style={[styles.emptyMessage, { color: colors.textSecondary }]}>
-              Tap "+ New Application" above to start tracking your job search.
+              Tap "+ New" above to start tracking your job search.
             </Text>
           </View>
         ) : filteredApplications.length === 0 ? (
@@ -202,8 +217,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingTop: 10,
   },
+  scrollContent: {
+    paddingBottom: 24,
+  },
   header: {
-    marginBottom: 14,
+    marginBottom: 10,
   },
   title: {
     fontSize: 26,
@@ -213,10 +231,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: 4,
   },
+  buttonRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 10,
+  },
   addButton: {
     alignItems: 'center',
     borderRadius: 4,
-    marginBottom: 8,
+    flex: 1,
     paddingVertical: 12,
   },
   addButtonText: {
@@ -229,13 +252,31 @@ const styles = StyleSheet.create({
     borderColor: '#D97706',
     borderRadius: 4,
     borderWidth: 1.5,
-    marginBottom: 12,
+    flex: 1,
     paddingVertical: 12,
   },
   browseButtonText: {
     color: '#D97706',
     fontSize: 15,
     fontWeight: '600',
+  },
+  filterToggle: {
+    alignItems: 'center',
+    borderRadius: 4,
+    borderWidth: 1.5,
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  filterToggleText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  filtersPanel: {
+    borderRadius: 4,
+    borderWidth: 1,
+    marginBottom: 10,
+    padding: 12,
   },
   searchInput: {
     borderRadius: 4,
@@ -267,7 +308,7 @@ const styles = StyleSheet.create({
   filterLabel: {
     fontSize: 14,
     fontWeight: '600',
-    marginTop: 12,
+    marginTop: 10,
     marginBottom: 6,
   },
   filterRow: {
@@ -281,8 +322,8 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     flexDirection: 'row',
     gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   filterDot: {
     borderRadius: 999,
@@ -290,7 +331,7 @@ const styles = StyleSheet.create({
     width: 10,
   },
   filterButtonText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
   },
   filterButtonTextSelected: {
@@ -320,9 +361,5 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginTop: 8,
     textAlign: 'center',
-  },
-  listContent: {
-    paddingBottom: 24,
-    paddingTop: 12,
   },
 });
