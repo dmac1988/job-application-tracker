@@ -131,7 +131,8 @@ export default function SettingsScreen() {
       });
 
       const csv = header + rows.join('\n');
-      const file = new File(Paths.cache, 'applications.csv');
+      const filename = 'applications_' + Date.now() + '.csv';
+      const file = new File(Paths.cache, filename);
       file.create();
       file.write(csv);
 
@@ -339,214 +340,46 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    padding: 20,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '800',
-    marginBottom: 20,
-  },
-  section: {
-    marginBottom: 28,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 12,
-  },
-  themeCard: {
-    alignItems: 'center',
-    borderRadius: 4,
-    borderWidth: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-    padding: 16,
-  },
-  themeLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  accountCard: {
-    borderRadius: 4,
-    borderWidth: 1,
-    marginBottom: 12,
-    padding: 16,
-  },
-  accountLabel: {
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  accountUsername: {
-    fontSize: 20,
-    fontWeight: '800',
-    marginTop: 4,
-  },
-  exportButton: {
-    alignItems: 'center',
-    borderRadius: 4,
-    marginBottom: 10,
-    paddingVertical: 14,
-  },
-  exportButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  form: {
-    borderRadius: 4,
-    borderWidth: 1,
-    marginBottom: 12,
-    padding: 16,
-  },
-  field: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 6,
-  },
-  input: {
-    borderRadius: 4,
-    borderWidth: 1.5,
-    fontSize: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-  },
-  colourRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  colourDot: {
-    borderRadius: 999,
-    height: 36,
-    width: 36,
-  },
-  colourDotSmall: {
-    borderRadius: 999,
-    height: 28,
-    width: 28,
-  },
-  colourDotSelected: {
-    borderColor: '#1A1A2E',
-    borderWidth: 3,
-  },
-  addButton: {
-    alignItems: 'center',
-    borderRadius: 4,
-    paddingVertical: 14,
-  },
-  addButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  card: {
-    borderRadius: 4,
-    borderWidth: 1,
-    marginBottom: 10,
-    padding: 14,
-  },
-  cardLeft: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 10,
-  },
-  colourIndicator: {
-    borderRadius: 999,
-    height: 16,
-    width: 16,
-  },
-  cardName: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  cardActions: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 10,
-  },
-  editButton: {
-    backgroundColor: '#EFF6FF',
-    borderColor: '#93C5FD',
-    borderRadius: 4,
-    borderWidth: 1.5,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  editButtonText: {
-    color: '#1D4ED8',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  deleteSmall: {
-    borderRadius: 4,
-    borderWidth: 1.5,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  deleteSmallText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  editForm: {
-    gap: 12,
-  },
-  editActions: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  saveButton: {
-    borderRadius: 4,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  saveButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  cancelButton: {
-    borderRadius: 4,
-    borderWidth: 1.5,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  cancelButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  secondaryButton: {
-    alignItems: 'center',
-    borderRadius: 4,
-    borderWidth: 1.5,
-    marginBottom: 10,
-    paddingVertical: 14,
-  },
-  secondaryButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  dangerButton: {
-    alignItems: 'center',
-    borderRadius: 4,
-    borderWidth: 1.5,
-    marginBottom: 10,
-    paddingVertical: 14,
-  },
-  dangerButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  backButton: {
-    alignItems: 'center',
-    borderRadius: 4,
-    borderWidth: 1.5,
-    paddingVertical: 14,
-  },
-  backButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
+  safeArea: { flex: 1, padding: 20 },
+  title: { fontSize: 26, fontWeight: '800', marginBottom: 20 },
+  section: { marginBottom: 28 },
+  sectionTitle: { fontSize: 20, fontWeight: '700', marginBottom: 12 },
+  themeCard: { alignItems: 'center', borderRadius: 4, borderWidth: 1, flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12, padding: 16 },
+  themeLabel: { fontSize: 16, fontWeight: '600' },
+  accountCard: { borderRadius: 4, borderWidth: 1, marginBottom: 12, padding: 16 },
+  accountLabel: { fontSize: 13, fontWeight: '500' },
+  accountUsername: { fontSize: 20, fontWeight: '800', marginTop: 4 },
+  exportButton: { alignItems: 'center', borderRadius: 4, marginBottom: 10, paddingVertical: 14 },
+  exportButtonText: { fontSize: 16, fontWeight: '600' },
+  form: { borderRadius: 4, borderWidth: 1, marginBottom: 12, padding: 16 },
+  field: { marginBottom: 16 },
+  label: { fontSize: 14, fontWeight: '600', marginBottom: 6 },
+  input: { borderRadius: 4, borderWidth: 1.5, fontSize: 16, paddingHorizontal: 14, paddingVertical: 14 },
+  colourRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  colourDot: { borderRadius: 999, height: 36, width: 36 },
+  colourDotSmall: { borderRadius: 999, height: 28, width: 28 },
+  colourDotSelected: { borderColor: '#1A1A2E', borderWidth: 3 },
+  addButton: { alignItems: 'center', borderRadius: 4, paddingVertical: 14 },
+  addButtonText: { fontSize: 16, fontWeight: '600' },
+  card: { borderRadius: 4, borderWidth: 1, marginBottom: 10, padding: 14 },
+  cardLeft: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  colourIndicator: { borderRadius: 999, height: 16, width: 16 },
+  cardName: { fontSize: 16, fontWeight: '600' },
+  cardActions: { flexDirection: 'row', gap: 8, marginTop: 10 },
+  editButton: { backgroundColor: '#EFF6FF', borderColor: '#93C5FD', borderRadius: 4, borderWidth: 1.5, paddingHorizontal: 12, paddingVertical: 8 },
+  editButtonText: { color: '#1D4ED8', fontSize: 14, fontWeight: '600' },
+  deleteSmall: { borderRadius: 4, borderWidth: 1.5, paddingHorizontal: 12, paddingVertical: 8 },
+  deleteSmallText: { fontSize: 14, fontWeight: '600' },
+  editForm: { gap: 12 },
+  editActions: { flexDirection: 'row', gap: 8 },
+  saveButton: { borderRadius: 4, paddingHorizontal: 16, paddingVertical: 10 },
+  saveButtonText: { fontSize: 14, fontWeight: '600' },
+  cancelButton: { borderRadius: 4, borderWidth: 1.5, paddingHorizontal: 16, paddingVertical: 10 },
+  cancelButtonText: { fontSize: 14, fontWeight: '600' },
+  secondaryButton: { alignItems: 'center', borderRadius: 4, borderWidth: 1.5, marginBottom: 10, paddingVertical: 14 },
+  secondaryButtonText: { fontSize: 16, fontWeight: '600' },
+  dangerButton: { alignItems: 'center', borderRadius: 4, borderWidth: 1.5, marginBottom: 10, paddingVertical: 14 },
+  dangerButtonText: { fontSize: 16, fontWeight: '600' },
+  backButton: { alignItems: 'center', borderRadius: 4, borderWidth: 1.5, paddingVertical: 14 },
+  backButtonText: { fontSize: 16, fontWeight: '600' },
 });
