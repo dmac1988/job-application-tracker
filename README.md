@@ -1,50 +1,51 @@
-# Welcome to your Expo app 👋
+# ByeUnemployment 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Option C: Job Application Tracker**
 
-## Get started
+A mobile app built with React Native (Expo) and Drizzle ORM that allows users to record job applications, track application status changes over time, categorise applications, define application volume targets, and view aggregated progress.
 
-1. Install dependencies
+## Links
 
-   ```bash
-   npm install
-   ```
+- **GitHub Repository:** https://github.com/dmac1988/job-application-tracker
+- **Expo Link:** https://expo.dev/accounts/dmac1988/projects/byeunemployment/updates/b136e11c-b065-4977-9567-02ed7e255939
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Setup Instructions
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Scan the QR code with Expo Go (Android/iOS) or press `a` to open on Android emulator.
 
-## Learn more
+## Running Tests
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npm test
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Features
 
-## Join the community
+### Core
+- Add, edit, and delete job applications
+- Categories with custom names and colours
+- Weekly and monthly application targets with progress tracking
+- Insights with pie charts and bar charts
+- Search and filter by text, category, and date range
+- User registration, login, logout, and profile deletion
+- Local SQLite persistence via Drizzle ORM
+- Seed script with sample data
 
-Join our community of developers creating universal apps.
+### Advanced
+- Light/Dark mode toggle
+- CSV data export
+- Streak tracking for consecutive target completion
+- External API integration (Remotive remote job listings)
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Tech Stack
+
+- React Native with Expo SDK 54
+- Expo Router (file-based navigation)
+- Drizzle ORM with expo-sqlite
+- react-native-chart-kit for visualisations
+- Jest + React Native Testing Library for testing
